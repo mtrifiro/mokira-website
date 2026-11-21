@@ -41,7 +41,7 @@
 @media(max-width:470px){.topline{font-size:8px;padding:7px 14px;text-align:center}.hero h1{font-size:55px}.hero-footnote{font-size:8px}.hero-footnote span{padding:0 4px}.preview-shell{height:375px}.preview-head{padding:0 10px}.preview-head .brand{font-size:14px}.preview-head-end{font-size:9px}.preview-body{grid-template-columns:83px minmax(0,1fr)}.side-link{gap:2px;font-size:7px}.side-link .si{width:10px}.pv-title{font-size:24px}.pv-small-rows{grid-template-columns:1fr}.pv-small-rows div:nth-child(2){display:none}.pv-brief h4{font-size:16px}.pv-brief p{font-size:10px}.pv-other-title{font-size:27px}.agent-card{gap:6px}.agent-glyph{width:27px;height:27px;font-size:13px}.agent-state{display:none}.explore-tab span{display:none}.freedom-card{grid-template-columns:1fr}.freedom-card .figure{font-size:27px}.section-title{font-size:39px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
-/* ---- Mokira's mouse: idle in the corner, greets, peeks up from behind the page into the nav, scurries, hops when clicked. Decoration only. ---- */
+/* ---- Apeko, Mokira's mouse: idle in the corner, greets, peeks up from behind the page into the nav, scurries, waves, thinks, celebrates, hops when clicked. Decoration only. ---- */
 .mk-mouse{position:fixed;right:22px;bottom:14px;width:72px;height:72px;z-index:30;pointer-events:none}
 .mk-svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:auto;cursor:pointer}
 .mk-svg *{transform-box:fill-box}
@@ -70,6 +70,13 @@
 @keyframes mk-exit{to{transform:translateX(150px)}}
 @keyframes mk-enter{from{transform:translateX(150px)}to{transform:translateX(0)}}
 .mk-bubble{position:absolute;right:0;bottom:calc(100% + 6px);padding:5px 11px;border:1px solid #e1e2e6;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(15,20,60,.1);font-size:13px;white-space:nowrap;color:#25232d}
+/* His thinking dots (small to large, up and to the right) and the confetti of his little celebration. */
+.mk-think{position:absolute;right:0;bottom:calc(100% - 2px);display:flex;align-items:flex-end;gap:4px;pointer-events:none}
+.mk-think i{display:block;border:1px solid #e1e2e6;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(15,20,60,.1);opacity:0}
+.mk-think i:nth-child(1){width:6px;height:6px}
+.mk-think i:nth-child(2){width:9px;height:9px;margin-bottom:8px}
+.mk-think i:nth-child(3){width:13px;height:13px;margin-bottom:18px}
+.mk-confetti{position:absolute;left:50%;top:42%;width:6px;height:8px;margin:-4px 0 0 -3px;border-radius:1.5px;opacity:0;pointer-events:none}
 @media(max-width:760px){.mk-mouse{width:54px;height:54px;right:12px}}
 
 /* The side peek: behind the product preview (a layer under it), leaning out from its left edge. */
@@ -260,6 +267,16 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     { transform: 'translateY(3px) rotate(-360deg) scale(1.08,.88)', offset: 0.9 },
     { transform: 'translateY(0) rotate(-360deg) scale(1,1)' }];
 
+  // His parts, for the poses below: the right paw, the left one, his
+  // head and his eyes.
+  const paw = svg.querySelector('.mk-paw'), pawL = paw.previousElementSibling;
+  const head = paw.nextElementSibling, eyes = svg.querySelector('.mk-eyes');
+  const REST = 'translate(0px,0px) rotate(0deg)';
+  // A pose turns about the part's bottom middle; hold() goes to a pose,
+  // stays there, and comes back.
+  const pose = (el, frames, opts) => anim(el, frames.map((f) => ({ transformOrigin: 'center bottom', ...f })), opts);
+  const hold = (rest, there) => [{ transform: rest }, { transform: there, offset: 0.16 }, { transform: there, offset: 0.84 }, { transform: rest }];
+
   // Little things he does in his corner, never the same twice running.
   const FIDGETS = {
     glance: () => anim(svg, [
@@ -267,9 +284,75 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
       { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.45 }, { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.72 },
       { transform: 'rotate(0)' }], { duration: rnd(1400, 2400), easing: 'ease-in-out' }),
     hop: () => cls('mk-hop', 1000),
-    wave: () => anim(svg.querySelector('.mk-paw'), [
-      { transform: 'none' }, { transform: 'rotate(-38deg) translate(2px,-6px)' }, { transform: 'none' },
-      { transform: 'rotate(-38deg) translate(2px,-6px)' }, { transform: 'none' }], { duration: 1300 }),
+    // A friendly wave: he leans a little, lifts a paw up beside his
+    // head and waves it back and forth, with a hello now and then.
+    wave: () => {
+      const duration = rnd(1900, 2400);
+      const up = 'translate(22px,-25px)';
+      const frames = [{ transform: REST }];
+      const swings = 5;
+      for (let k = 0; k < swings; k++) {
+        frames.push({ transform: `${up} rotate(${k % 2 ? 24 : -22}deg)`, offset: 0.16 + (0.68 * k) / (swings - 1) });
+      }
+      frames.push({ transform: REST });
+      if (Math.random() < 0.5) say(pick(['Hello!', 'Hi there!', 'Hey, you!']), duration - 300);
+      return Promise.all([
+        pose(paw, frames, { duration, easing: 'ease-in-out' }),
+        pose(svg, hold('rotate(0deg)', 'rotate(-5deg)'), { duration, easing: 'ease-in-out' }),
+      ]);
+    },
+    // A thinking moment: head to one side, eyes up, a paw at his chin,
+    // and three thought dots rising. Now and then it ends in an idea.
+    think: async () => {
+      const duration = rnd(2800, 3600);
+      const dots = document.createElement('span'); dots.className = 'mk-think';
+      dots.innerHTML = '<i></i><i></i><i></i>'; m.appendChild(dots);
+      [...dots.children].forEach((dot, k) => dot.animate(
+        [{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }],
+        { duration: 260, delay: duration * 0.2 + k * 320, fill: 'forwards', easing: 'ease-out' }));
+      const chin = 'translate(-5px,-10px) rotate(-15deg)';
+      try {
+        await Promise.all([
+          pose(head, hold('rotate(0deg)', 'rotate(-9deg)'), { duration, easing: 'ease-in-out' }),
+          anim(eyes, hold('translate(0px,0px)', 'translate(1.5px,-2.5px)'), { duration, easing: 'ease-in-out' }),
+          pose(paw, [
+            { transform: REST }, { transform: chin, offset: 0.18 },
+            { transform: 'translate(-5px,-12px) rotate(-15deg)', offset: 0.4 }, { transform: chin, offset: 0.5 },
+            { transform: 'translate(-5px,-12px) rotate(-15deg)', offset: 0.6 }, { transform: chin, offset: 0.82 },
+            { transform: REST }], { duration, easing: 'ease-in-out' }),
+        ]);
+      } finally { dots.remove(); }
+      if (Math.random() < 0.45) { say(pick(['Aha!', 'Oh! I know!', 'Got it!']), 1100); await cls('mk-hop', 1000); }
+    },
+    // A small celebration: two happy jumps with both paws in the air
+    // and a puff of confetti.
+    celebrate: () => {
+      const duration = 1500;
+      if (Math.random() < 0.6) say(pick(['Yay!', 'Woohoo!', 'Hooray!']), 1400);
+      for (let k = 0; k < 14; k++) {
+        const bit = document.createElement('i'); bit.className = 'mk-confetti';
+        bit.style.background = pick(['#6a64a8', '#9d98d2', '#e98aa8', '#f3c3d6', '#f2c14e']);
+        if (k % 3 === 0) bit.style.borderRadius = '50%';
+        m.appendChild(bit);
+        const angle = rnd(-Math.PI * 0.95, -Math.PI * 0.05), far = rnd(44, 88);
+        const x = Math.cos(angle) * far, y = Math.sin(angle) * far;
+        bit.animate([
+          { transform: 'translate(0px,0px) rotate(0deg)', opacity: 0 },
+          { transform: `translate(${x * 0.2}px,${y * 0.2}px) rotate(0deg)`, opacity: 1, offset: 0.08 },
+          { transform: `translate(${x}px,${y}px) rotate(${rnd(-200, 200)}deg)`, opacity: 1, offset: 0.55 },
+          { transform: `translate(${x * 1.15}px,${y + rnd(30, 60)}px) rotate(${rnd(-360, 360)}deg)`, opacity: 0 }],
+          { duration: rnd(1100, 1600), delay: rnd(180, 300), easing: 'ease-out' }).finished.then(() => bit.remove(), () => bit.remove());
+      }
+      return Promise.all([
+        anim(svg, [
+          { transform: 'translateY(0px) scale(1,1)' }, { transform: 'translateY(2px) scale(1.07,.9)', offset: 0.1 },
+          { transform: 'translateY(-24px) scale(.96,1.06)', offset: 0.3 }, { transform: 'translateY(0px) scale(1.05,.94)', offset: 0.5 },
+          { transform: 'translateY(-18px) scale(.97,1.04)', offset: 0.7 }, { transform: 'translateY(0px) scale(1.04,.96)', offset: 0.9 },
+          { transform: 'translateY(0px) scale(1,1)' }], { duration, easing: 'ease-out' }),
+        pose(paw, hold(REST, 'translate(27px,-35px) rotate(24deg)'), { duration, easing: 'ease-in-out' }),
+        pose(pawL, hold(REST, 'translate(-27px,-35px) rotate(-24deg)'), { duration, easing: 'ease-in-out' }),
+      ]);
+    },
     stretch: () => anim(svg, [
       { transform: 'scale(1,1)' }, { transform: 'scale(.93,1.13)', offset: 0.4 },
       { transform: 'scale(1.05,.93)', offset: 0.7 }, { transform: 'scale(1,1)' }], { duration: rnd(1300, 1900), easing: 'ease-in-out' }),
@@ -429,14 +512,14 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     if (busy) return;
     busy = true;
     if (Math.random() < 0.5) say(pick(['Eep!', 'Hehe!', 'Hi!', '♥']), 1200);
-    await pick([FIDGETS.hop, FIDGETS.twirl, FIDGETS.wave, FIDGETS.backflip, FIDGETS.backflip])();
+    await pick([FIDGETS.hop, FIDGETS.twirl, FIDGETS.wave, FIDGETS.celebrate, FIDGETS.backflip, FIDGETS.backflip])();
     busy = false;
   });
 
   // Greet on arrival, then a life of his own: peeks and fidgets
   // at uneven times.
   (async () => {
-    busy = true; m.classList.add('mk-greet'); setTimeout(() => say('Hi!', 2400), 700);
+    busy = true; m.classList.add('mk-greet'); setTimeout(() => say("Hi, I'm Apeko!", 3000), 700);
     await wait(3400); m.classList.remove('mk-greet'); busy = false;
     await wait(rnd(2500, 5000));
     for (;;) {
