@@ -247,9 +247,6 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
       { transform: 'translateY(0) rotate(360deg)' }], { duration: rnd(800, 1100), easing: 'ease-in-out' }),
     // A backflip: crouch, spring up and over backwards, land with a squash.
     backflip: () => anim(svg, flipFrames(), { duration: rnd(950, 1200), easing: 'cubic-bezier(.3,.1,.3,1)' }),
-    shuffle: () => anim(m, [
-      { transform: 'translateX(0)' }, { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.4 },
-      { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.6 }, { transform: 'translateX(0)' }], { duration: rnd(1500, 2300), easing: 'ease-in-out' }),
   };
   let lastFidget = '';
   const fidget = async () => {
@@ -395,16 +392,6 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     busy = false;
   };
 
-  // A dash along the bottom: how far and how fast, at random.
-  const scurry = async () => {
-    busy = true; m.classList.add('mk-run');
-    const d = rnd(18, 55);
-    await anim(m, [
-      { transform: 'translateX(0)' }, { transform: `translateX(-${d}vw)`, offset: 0.45 },
-      { transform: `translateX(-${d}vw)`, offset: rnd(0.5, 0.6) }, { transform: 'translateX(0)' }],
-      { duration: rnd(2000, 3600), easing: 'ease-in-out' });
-    m.classList.remove('mk-run'); busy = false;
-  };
 
   // Click: a reaction, and a squeak now and then.
   svg.addEventListener('click', async () => {
@@ -415,7 +402,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     busy = false;
   });
 
-  // Greet on arrival, then a life of his own: peeks, scurries and fidgets
+  // Greet on arrival, then a life of his own: peeks and fidgets
   // at uneven times.
   (async () => {
     busy = true; m.classList.add('mk-greet'); setTimeout(() => say('Hi!', 2400), 700);
@@ -424,8 +411,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     for (;;) {
       if (!busy) {
         const r = Math.random();
-        if (r < 0.45) await goPeek();
-        else if (r < 0.62) await scurry();
+        if (r < 0.55) await goPeek();
         else await fidget();
       }
       await wait(rnd(3500, 11000));
