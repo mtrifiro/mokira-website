@@ -246,10 +246,27 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     frames.push({ transform: shown(0), offset: 0.86 }, { transform: hidden(0) });
     return frames;
   };
+  // From behind the hero's product preview, on any of its four sides
+  // and anywhere along it: out from the left or right, up over the top,
+  // or down below the bottom, hanging upside down.
+  const SIDES = {
+    left:   { place: (at) => ({ left: '0', right: 'auto', top: `${at}%`, bottom: 'auto' }), move: (d) => `translateX(${-d}px)`, base: -10 },
+    right:  { place: (at) => ({ left: 'auto', right: '0', top: `${at}%`, bottom: 'auto' }), move: (d) => `translateX(${d}px)`, base: 10 },
+    top:    { place: (at) => ({ left: `${at}%`, right: 'auto', top: '0', bottom: 'auto' }), move: (d) => `translateY(${-d}px)`, base: 0 },
+    bottom: { place: (at) => ({ left: `${at}%`, right: 'auto', top: 'auto', bottom: '0' }), move: (d) => `translateY(${d}px)`, base: 180 },
+  };
+  let lastSide = '';
   const peekSide = async () => {
-    const out = rnd(-58, -40);
-    const hidden = () => 'translateX(34px) rotate(0)';
-    const shown = (a, more = 0) => `translateX(${out - more}px) rotate(${a - 10}deg)`;
+    const name = pick(Object.keys(SIDES).filter((k) => k !== lastSide)); lastSide = name;
+    const sideOf = SIDES[name];
+    // Along the side, clear of the corners (and of the note at the
+    // preview's bottom left).
+    const at = name === 'bottom' ? rnd(38, 82) : name === 'top' ? rnd(8, 82) : rnd(12, 70);
+    Object.assign(side.style, sideOf.place(at));
+    const out = rnd(40, 58);
+    const hidden = () => `${sideOf.move(-34)} rotate(${sideOf.base}deg)`;
+    const shown = (a, more = 0) => `${sideOf.move(out + more)} rotate(${sideOf.base + a}deg)`;
+    side.style.transform = hidden();
     if (Math.random() < 0.3) {
       // A double-take: a quick look, back behind, and out again.
       await anim(side, [{ transform: hidden() }, { transform: shown(0), offset: 0.4 }, { transform: hidden() }], { duration: rnd(700, 1000), easing: 'ease-in-out' });
