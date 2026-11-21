@@ -83,6 +83,16 @@
 .mk-btn-peek{position:absolute;left:0;top:0;width:64px;height:64px;display:block;transform:translateY(52px)}
 .mk-btn-peek.on{animation:mk-btn-peek 4.2s ease-in-out forwards}
 @keyframes mk-btn-peek{0%{transform:translateY(52px)}18%{transform:translateY(4px)}32%{transform:translateY(4px) rotate(-8deg)}48%{transform:translateY(4px) rotate(8deg)}62%,82%{transform:translateY(4px) rotate(0)}100%{transform:translateY(52px)}}
+
+/* What he says when he pops up over the button, and his running gait. */
+.mk-btn-say{position:absolute;left:84px;bottom:calc(100% + 26px);padding:6px 12px;border:1px solid #e1e2e6;border-radius:12px 12px 12px 3px;background:#fff;box-shadow:0 4px 12px rgba(15,20,60,.12);font-size:13px;font-weight:600;color:#34397f;white-space:nowrap;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none}
+.mk-btn-say.show{opacity:1;transform:translateY(0)}
+.mk-run .mk-svg,.mk-run.mk-edge .mk-edge-svg{animation:mk-trot .15s ease-in-out infinite alternate}
+
+/* The left edge: he comes in from off the window's left side. */
+.mk-edge{position:fixed;left:0;top:55%;width:72px;height:72px;z-index:30;pointer-events:none;transform:translateX(-96px)}
+.mk-edge-svg{display:block;width:100%;height:100%;overflow:visible}
+@media(max-width:760px){.mk-edge{width:56px;height:56px}}
 </style>
 </head>
 <body>
@@ -101,7 +111,7 @@
     <div class="eyebrow">PRIVATE FRONTIER INTELLIGENCE</div>
     <h1>Intelligence should set you <em>free.</em></h1>
     <p class="hero-description">Your day shouldn't be a collection of disconnected apps. Mokira brings your inbox, calendar, to-dos, and AI agents into one thoughtful place—so you can spend less time managing life and more time living it.</p>
-    <div class="hero-buttons"><span class="mk-btn-wrap"><a href="#experience" class="primary">Explore your new day <span aria-hidden="true">↗</span></a><span class="mk-btn-window" aria-hidden="true"><span class="mk-btn-peek" id="mk-btn-peek"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur4" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head4" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur4)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head4)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></span></span></span><a href="#story" class="secondary">Discover the idea <span aria-hidden="true">↘</span></a></div>
+    <div class="hero-buttons"><span class="mk-btn-wrap"><a href="#experience" class="primary">Explore your new day <span aria-hidden="true">↗</span></a><span class="mk-btn-say" id="mk-btn-say" aria-hidden="true"></span><span class="mk-btn-window" aria-hidden="true"><span class="mk-btn-peek" id="mk-btn-peek"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur4" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head4" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur4)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head4)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></span></span></span><a href="#story" class="secondary">Discover the idea <span aria-hidden="true">↘</span></a></div>
     <div class="hero-footnote">ONE PERSONAL WORKSPACE <span>·</span> INTELLIGENCE ON YOUR TERMS</div>
   </div>
   <div class="device-zone" aria-label="Illustrative Mokira product interface">
@@ -167,53 +177,171 @@ const data={
 const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=>b.addEventListener('click',()=>{const id=b.getAttribute('data-explore'),d=data[id];exButtons.forEach(x=>{let a=x===b;x.classList.toggle('active',a);x.setAttribute('aria-pressed',String(a))});document.getElementById('ex-kicker').textContent=d.k;document.getElementById('ex-title').textContent=d.title;document.getElementById('ex-description').textContent=d.description;document.getElementById('ex-list-title').textContent=d.heading;document.getElementById('ex-list').replaceChildren(...d.items.map(t=>{const li=document.createElement('li');li.textContent=t;return li}))}));
 })();
 </script>
+<div class="mk-edge" id="mk-edge" aria-hidden="true"><svg class="mk-edge-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur5" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head5" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur5)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head5)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head5)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head5)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></div>
 <div class="mk-mouse" id="mk-mouse" aria-hidden="true"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></div>
 <script>
 (() => {
   const m = document.getElementById('mk-mouse');
   if (!m || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const svg = m.querySelector('svg');
+  const side = document.getElementById('mk-side');
+  const btn = document.getElementById('mk-btn-peek');
+  const btnSay = document.getElementById('mk-btn-say');
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = (list) => list[Math.floor(Math.random() * list.length)];
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const anim = (el, frames, opts) => el.animate(frames, { fill: 'none', ...opts }).finished;
   let busy = false;
+
   const say = (text, ms) => {
     const b = document.createElement('span'); b.className = 'mk-bubble'; b.textContent = text;
     m.appendChild(b); setTimeout(() => b.remove(), ms);
   };
-  const play = (cls, ms, then) => {
-    m.classList.remove(cls); void m.offsetWidth; m.classList.add(cls);
-    setTimeout(() => { m.classList.remove(cls); then && then(); }, ms);
+  const cls = async (c, ms) => {
+    m.classList.remove(c); void m.offsetWidth; m.classList.add(c);
+    await wait(ms); m.classList.remove(c);
   };
-  // Greet on arrival.
-  busy = true; play('mk-greet', 3400, () => busy = false); setTimeout(() => say('Hi!', 2400), 700);
-  // Click: a hop.
-  m.querySelector('svg').addEventListener('click', () => { if (!busy) play('mk-hop', 1000); });
-  // Peek: off the corner, then out from behind the hero's product
-  // preview on its left side, a look around, back behind it, and home.
-  const side = document.getElementById('mk-side');
-  // Or up from behind the "Explore your new day" button, over its top
-  // edge. He takes turns between the two.
-  const btn = document.getElementById('mk-btn-peek');
-  let turn = 0;
-  const peekNow = () => {
-    const spot = turn++ % 2 === 0 ? side : btn;
-    busy = true; m.classList.add('mk-exit');
-    setTimeout(() => {
-      m.classList.remove('mk-exit'); m.classList.add('mk-away');
-      spot.classList.remove('on'); void spot.offsetWidth; spot.classList.add('on');
-      setTimeout(() => {
-        spot.classList.remove('on'); m.classList.remove('mk-away');
-        play('mk-enter', 1800, () => busy = false);
-      }, 4500);
-    }, 1800);
+
+  // Little things he does in his corner, never the same twice running.
+  const FIDGETS = {
+    glance: () => anim(svg, [
+      { transform: 'rotate(0)' }, { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.3 },
+      { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.45 }, { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.72 },
+      { transform: 'rotate(0)' }], { duration: rnd(1400, 2400), easing: 'ease-in-out' }),
+    hop: () => cls('mk-hop', 1000),
+    wave: () => anim(svg.querySelector('.mk-paw'), [
+      { transform: 'none' }, { transform: 'rotate(-38deg) translate(2px,-6px)' }, { transform: 'none' },
+      { transform: 'rotate(-38deg) translate(2px,-6px)' }, { transform: 'none' }], { duration: 1300 }),
+    stretch: () => anim(svg, [
+      { transform: 'scale(1,1)' }, { transform: 'scale(.93,1.13)', offset: 0.4 },
+      { transform: 'scale(1.05,.93)', offset: 0.7 }, { transform: 'scale(1,1)' }], { duration: rnd(1300, 1900), easing: 'ease-in-out' }),
+    twirl: () => anim(svg, [
+      { transform: 'translateY(0) rotate(0)' }, { transform: 'translateY(-14px) rotate(180deg)', offset: 0.5 },
+      { transform: 'translateY(0) rotate(360deg)' }], { duration: rnd(800, 1100), easing: 'ease-in-out' }),
+    shuffle: () => anim(m, [
+      { transform: 'translateX(0)' }, { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.4 },
+      { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.6 }, { transform: 'translateX(0)' }], { duration: rnd(1500, 2300), easing: 'ease-in-out' }),
   };
-  // Often: a peek every 8 to 14 seconds, now and then a scurry instead.
-  const next = () => setTimeout(() => {
-    if (!busy) {
-      if (Math.random() < 0.25) { busy = true; play('mk-scurry', 2800, () => busy = false); }
-      else peekNow();
+  let lastFidget = '';
+  const fidget = async () => {
+    const name = pick(Object.keys(FIDGETS).filter((k) => k !== lastFidget));
+    lastFidget = name; busy = true; await FIDGETS[name](); busy = false;
+  };
+
+  // A peek's motion, made up fresh each time: how far out, how long, and
+  // a few looks around at random angles.
+  const peekFrames = (hidden, shown, angle, lean) => {
+    const frames = [{ transform: hidden(0) }, { transform: shown(rnd(-angle, angle) / 2), offset: rnd(0.12, 0.2) }];
+    const looks = Math.floor(rnd(2, 5));
+    for (let k = 1; k <= looks; k++) {
+      const at = 0.2 + (0.62 * k) / (looks + 1);
+      frames.push({ transform: shown(rnd(-angle, angle), Math.random() < 0.25 ? lean : 0), offset: at });
     }
-    next();
-  }, 8000 + Math.random() * 6000);
-  setTimeout(peekNow, 4000);
-  next();
+    frames.push({ transform: shown(0), offset: 0.86 }, { transform: hidden(0) });
+    return frames;
+  };
+  const peekSide = async () => {
+    const out = rnd(-58, -40);
+    const hidden = () => 'translateX(34px) rotate(0)';
+    const shown = (a, more = 0) => `translateX(${out - more}px) rotate(${a - 10}deg)`;
+    if (Math.random() < 0.3) {
+      // A double-take: a quick look, back behind, and out again.
+      await anim(side, [{ transform: hidden() }, { transform: shown(0), offset: 0.4 }, { transform: hidden() }], { duration: rnd(700, 1000), easing: 'ease-in-out' });
+      await wait(rnd(300, 900));
+    }
+    await anim(side, peekFrames(hidden, shown, 9, 8), { duration: rnd(3000, 5600), easing: 'ease-in-out' });
+  };
+  const LINES = [
+    'Psst… try the app!', "Your day's waiting in here →", 'Go on, take a look!',
+    "It's cozy in here. Come in!", 'Try Mokira — I saved you a seat.', 'Click it! I dare you.',
+    'Want to see your day?',
+  ];
+  let lastLine = '';
+  const peekButton = async () => {
+    const up = rnd(0, 7);
+    const hidden = () => 'translateY(52px) rotate(0)';
+    const shown = (a, more = 0) => `translateY(${up - more}px) rotate(${a}deg)`;
+    const duration = rnd(3600, 6000);
+    const line = pick(LINES.filter((l) => l !== lastLine)); lastLine = line;
+    setTimeout(() => { btnSay.textContent = line; btnSay.classList.add('show'); }, duration * 0.2);
+    setTimeout(() => btnSay.classList.remove('show'), duration * 0.82);
+    await anim(btn, peekFrames(hidden, shown, 11, 4), { duration, easing: 'ease-in-out' });
+  };
+
+  // From the window's left edge, at a height of his own choosing: a peek
+  // in, or now and then all the way out for a look around and back.
+  const edge = document.getElementById('mk-edge');
+  const peekEdge = async () => {
+    edge.style.top = `${rnd(28, 78)}vh`;
+    const hidden = () => 'translateX(-96px) rotate(0)';
+    if (Math.random() < 0.35) {
+      const walk = rnd(40, 160);
+      edge.classList.add('mk-run');
+      await anim(edge, [
+        { transform: hidden() }, { transform: `translateX(${walk}px) rotate(0)`, offset: 0.3 },
+        { transform: `translateX(${walk}px) rotate(-8deg)`, offset: 0.45 }, { transform: `translateX(${walk}px) rotate(8deg)`, offset: 0.6 },
+        { transform: `translateX(${walk}px) rotate(0)`, offset: 0.7 }, { transform: hidden() }],
+        { duration: rnd(4200, 6000), easing: 'ease-in-out' });
+      edge.classList.remove('mk-run');
+      return;
+    }
+    const out = rnd(-34, -14);
+    const shown = (a, more = 0) => `translateX(${out + more}px) rotate(${a + 12}deg)`;
+    await anim(edge, peekFrames(hidden, shown, 10, 10), { duration: rnd(3000, 5200), easing: 'ease-in-out' });
+  };
+
+  // A peek: off the corner, out at one of his spots (sometimes two,
+  // one after the other), then home again.
+  const goPeek = async () => {
+    busy = true;
+    m.classList.add('mk-exit'); await wait(1800);
+    m.classList.remove('mk-exit'); m.classList.add('mk-away');
+    const spots = [peekSide, peekButton, peekEdge];
+    const first = pick(spots);
+    await wait(rnd(200, 1400));
+    await first();
+    if (Math.random() < 0.3) { await wait(rnd(600, 1800)); await pick(spots.filter((f) => f !== first))(); }
+    await wait(rnd(200, 1200));
+    m.classList.remove('mk-away'); await cls('mk-enter', 1800);
+    busy = false;
+  };
+
+  // A dash along the bottom: how far and how fast, at random.
+  const scurry = async () => {
+    busy = true; m.classList.add('mk-run');
+    const d = rnd(18, 55);
+    await anim(m, [
+      { transform: 'translateX(0)' }, { transform: `translateX(-${d}vw)`, offset: 0.45 },
+      { transform: `translateX(-${d}vw)`, offset: rnd(0.5, 0.6) }, { transform: 'translateX(0)' }],
+      { duration: rnd(2000, 3600), easing: 'ease-in-out' });
+    m.classList.remove('mk-run'); busy = false;
+  };
+
+  // Click: a reaction, and a squeak now and then.
+  svg.addEventListener('click', async () => {
+    if (busy) return;
+    busy = true;
+    if (Math.random() < 0.5) say(pick(['Eep!', 'Hehe!', 'Hi!', '♥']), 1200);
+    await pick([FIDGETS.hop, FIDGETS.twirl, FIDGETS.wave])();
+    busy = false;
+  });
+
+  // Greet on arrival, then a life of his own: peeks, scurries and fidgets
+  // at uneven times.
+  (async () => {
+    busy = true; m.classList.add('mk-greet'); setTimeout(() => say('Hi!', 2400), 700);
+    await wait(3400); m.classList.remove('mk-greet'); busy = false;
+    await wait(rnd(2500, 5000));
+    for (;;) {
+      if (!busy) {
+        const r = Math.random();
+        if (r < 0.45) await goPeek();
+        else if (r < 0.62) await scurry();
+        else await fidget();
+      }
+      await wait(rnd(3500, 11000));
+    }
+  })();
 })();
 </script>
 </body>
