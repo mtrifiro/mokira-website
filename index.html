@@ -220,6 +220,15 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await wait(ms); m.classList.remove(c);
   };
 
+  const flipFrames = () => [
+    { transform: 'translateY(0) rotate(0) scale(1,1)' },
+    { transform: 'translateY(4px) rotate(0) scale(1.08,.86)', offset: 0.14 },
+    { transform: 'translateY(-34px) rotate(-120deg) scale(.96,1.05)', offset: 0.38 },
+    { transform: 'translateY(-46px) rotate(-200deg) scale(1,1)', offset: 0.55 },
+    { transform: 'translateY(-14px) rotate(-330deg) scale(1,1)', offset: 0.8 },
+    { transform: 'translateY(3px) rotate(-360deg) scale(1.08,.88)', offset: 0.9 },
+    { transform: 'translateY(0) rotate(-360deg) scale(1,1)' }];
+
   // Little things he does in his corner, never the same twice running.
   const FIDGETS = {
     glance: () => anim(svg, [
@@ -237,15 +246,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
       { transform: 'translateY(0) rotate(0)' }, { transform: 'translateY(-14px) rotate(180deg)', offset: 0.5 },
       { transform: 'translateY(0) rotate(360deg)' }], { duration: rnd(800, 1100), easing: 'ease-in-out' }),
     // A backflip: crouch, spring up and over backwards, land with a squash.
-    backflip: () => anim(svg, [
-      { transform: 'translateY(0) rotate(0) scale(1,1)' },
-      { transform: 'translateY(4px) rotate(0) scale(1.08,.86)', offset: 0.14 },
-      { transform: 'translateY(-34px) rotate(-120deg) scale(.96,1.05)', offset: 0.38 },
-      { transform: 'translateY(-46px) rotate(-200deg) scale(1,1)', offset: 0.55 },
-      { transform: 'translateY(-14px) rotate(-330deg) scale(1,1)', offset: 0.8 },
-      { transform: 'translateY(3px) rotate(-360deg) scale(1.08,.88)', offset: 0.9 },
-      { transform: 'translateY(0) rotate(-360deg) scale(1,1)' }],
-      { duration: rnd(950, 1200), easing: 'cubic-bezier(.3,.1,.3,1)' }),
+    backflip: () => anim(svg, flipFrames(), { duration: rnd(950, 1200), easing: 'cubic-bezier(.3,.1,.3,1)' }),
     shuffle: () => anim(m, [
       { transform: 'translateX(0)' }, { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.4 },
       { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.6 }, { transform: 'translateX(0)' }], { duration: rnd(1500, 2300), easing: 'ease-in-out' }),
@@ -296,6 +297,35 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     }
     await anim(side, peekFrames(hidden, shown, 9, 8), { duration: rnd(3000, 5600), easing: 'ease-in-out' });
   });
+  // Now and then: up over the preview's top edge, out on top of it, a
+  // backflip (or two) up there, a look around, and back down behind it.
+  const sideSvg = side.querySelector('svg');
+  const peekClimb = () => out(side, async () => {
+    Object.assign(side.style, SIDES.top.place(rnd(12, 80)));
+    const hidden = 'translateY(34px) rotate(0)';
+    const peek = 'translateY(-40px) rotate(0)';
+    const stand = 'translateY(-80px) rotate(0)';
+    side.style.transform = hidden;
+    await anim(side, [
+      { transform: hidden }, { transform: peek, offset: 0.3 },
+      { transform: `translateY(-40px) rotate(${rnd(-10, 10)}deg)`, offset: 0.5 }, { transform: peek, offset: 0.65 },
+      { transform: 'translateY(-92px) rotate(0)', offset: 0.85 }, { transform: stand }],
+      { duration: rnd(2200, 3000), easing: 'ease-in-out' });
+    side.style.transform = stand;
+    await wait(rnd(300, 800));
+    const flips = Math.random() < 0.35 ? 2 : 1;
+    for (let k = 0; k < flips; k++) {
+      await anim(sideSvg, flipFrames(), { duration: rnd(950, 1150), easing: 'cubic-bezier(.3,.1,.3,1)' });
+      await wait(rnd(150, 400));
+    }
+    await anim(sideSvg, [
+      { transform: 'rotate(0)' }, { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.35 },
+      { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.7 }, { transform: 'rotate(0)' }], { duration: rnd(1200, 1800), easing: 'ease-in-out' });
+    await anim(side, [{ transform: stand }, { transform: 'translateY(-104px) rotate(0)', offset: 0.35 }, { transform: hidden }],
+      { duration: rnd(800, 1100), easing: 'ease-in' });
+    side.style.transform = hidden;
+  });
+
   const LINES = [
     'Psst… try the app!', "Your day's waiting in here →", 'Go on, take a look!',
     "It's cozy in here. Come in!", 'Try Mokira — I saved you a seat.', 'Click it! I dare you.',
@@ -354,7 +384,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     busy = true;
     m.classList.add('mk-exit'); await wait(1800);
     m.classList.remove('mk-exit'); m.classList.add('mk-away');
-    const spots = [peekNav, peekSide, peekButton, peekEdge];
+    const spots = [peekNav, peekSide, peekButton, peekEdge, peekClimb];
     const first = pick(spots);
     await wait(rnd(200, 1400));
     await first();
