@@ -39,6 +39,42 @@
 @media(max-width:760px){.site-nav{height:68px;gap:10px}.brand{font-size:22px}.brand svg{width:30px}.nav-menu{position:absolute;display:none;left:0;right:0;top:68px;background:#303579;padding:20px 24px;flex-direction:column;align-items:start;gap:20px;box-shadow:0 12px 25px #22234428}.nav-menu.open{display:flex}.mobile-toggle{display:block;margin-left:auto}.nav-cta{padding:11px 13px;font-size:10px}.hero-inner{padding-top:65px;padding-bottom:76px}.hero h1{font-size:clamp(55px,12vw,78px);letter-spacing:-.06em}.hero-description{font-size:14px}.preview-shell{height:420px}.preview-body{grid-template-columns:98px minmax(0,1fr)}.preview-side{padding:9px 4px}.side-link{font-size:8px;padding:6px;gap:5px}.preview-canvas{padding:15px 12px}.pv-title{font-size:29px}.pv-grid{grid-template-columns:1fr}.pv-events{display:none}.pv-brief h4{font-size:18px}.pv-brief p{font-size:12px}.floating-note{display:none}.strip-inner{justify-content:center}.strip-items{justify-content:center;gap:15px}.section{padding:73px 0}.triptych{grid-template-columns:1fr}.story-card{min-height:250px}.freedom-grid{grid-template-columns:1fr}.freedom-card{padding:27px;grid-template-columns:30px 1fr}.freedom-card h3{font-size:29px}.explore-panel{grid-template-columns:1fr}.explore-side{border-right:0;border-bottom:1px solid #e9e7ee;padding:14px;display:flex;gap:5px;flex-wrap:wrap}.explore-side .explore-mark{display:none}.explore-tab{width:auto;font-size:11px;margin:0;padding:10px}.explore-main{padding:29px 23px}.footer{flex-direction:column;align-items:start}}
 @media(max-width:470px){.topline{font-size:8px;padding:7px 14px;text-align:center}.hero h1{font-size:55px}.hero-footnote{font-size:8px}.hero-footnote span{padding:0 4px}.preview-shell{height:375px}.preview-head{padding:0 10px}.preview-head .brand{font-size:14px}.preview-head-end{font-size:9px}.preview-body{grid-template-columns:83px minmax(0,1fr)}.side-link{gap:2px;font-size:7px}.side-link .si{width:10px}.pv-title{font-size:24px}.pv-small-rows{grid-template-columns:1fr}.pv-small-rows div:nth-child(2){display:none}.pv-brief h4{font-size:16px}.pv-brief p{font-size:10px}.pv-other-title{font-size:27px}.agent-card{gap:6px}.agent-glyph{width:27px;height:27px;font-size:13px}.agent-state{display:none}.explore-tab span{display:none}.freedom-card{grid-template-columns:1fr}.freedom-card .figure{font-size:27px}.section-title{font-size:39px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+
+/* ---- Mokira's mouse: idle in the corner, greets, peeks up from behind the page into the nav, scurries, hops when clicked. Decoration only. ---- */
+.mk-mouse{position:fixed;right:22px;bottom:14px;width:72px;height:72px;z-index:30;pointer-events:none}
+.mk-svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:auto;cursor:pointer}
+.mk-svg *{transform-box:fill-box}
+.mk-breathe{transform-origin:center bottom;animation:mk-breathe 3s ease-in-out infinite}
+.mk-eyes{transform-origin:center;animation:mk-blink 4.2s infinite}
+.mk-wl{transform-origin:right center;animation:mk-whisk 2.6s ease-in-out infinite}
+.mk-wr{transform-origin:left center;animation:mk-whisk 2.6s ease-in-out infinite reverse}
+.mk-tail{transform-origin:left bottom;animation:mk-tail 3.2s ease-in-out infinite}
+@keyframes mk-breathe{50%{transform:scale(1.02,.985)}}
+@keyframes mk-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes mk-whisk{50%{transform:rotate(-6deg)}}
+@keyframes mk-tail{50%{transform:rotate(8deg)}}
+.mk-greet{animation:mk-rise 3.4s ease-in-out}
+.mk-greet .mk-paw{transform-origin:bottom left;animation:mk-wave .5s ease-in-out .7s 4 alternate}
+@keyframes mk-rise{0%{transform:translateY(90px)}18%,100%{transform:translateY(0)}}
+@keyframes mk-wave{to{transform:rotate(-38deg) translate(2px,-6px)}}
+.mk-hop .mk-svg{animation:mk-hop .5s ease-out 2}
+@keyframes mk-hop{15%{transform:scale(1.06,.92)}50%{transform:translateY(-26px) scale(.96,1.05)}}
+.mk-scurry{animation:mk-scurry 2.8s ease-in-out}
+.mk-scurry .mk-svg,.mk-exit .mk-svg,.mk-enter .mk-svg{animation:mk-trot .16s ease-in-out infinite alternate}
+@keyframes mk-scurry{45%,55%{transform:translateX(-40vw)}}
+@keyframes mk-trot{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-5px) rotate(3deg)}}
+.mk-exit{animation:mk-exit 1.8s ease-in forwards}
+.mk-away{visibility:hidden;transform:translateX(150px)}
+.mk-enter{animation:mk-enter 1.8s ease-out}
+@keyframes mk-exit{to{transform:translateX(150px)}}
+@keyframes mk-enter{from{transform:translateX(150px)}to{transform:translateX(0)}}
+.mk-bubble{position:absolute;right:0;bottom:calc(100% + 6px);padding:5px 11px;border:1px solid #e1e2e6;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(15,20,60,.1);font-size:13px;white-space:nowrap;color:#25232d}
+/* The peek: a window along the nav's bottom edge shows only what rises above the page. */
+.mk-peek-window{position:absolute;left:71%;bottom:0;width:72px;height:46px;overflow:hidden;pointer-events:none}
+.mk-peek{position:absolute;left:0;top:0;width:72px;height:72px;transform:translateY(60px)}
+.mk-peek.on{animation:mk-peek 4.2s ease-in-out forwards}
+@keyframes mk-peek{0%{transform:translateY(60px)}18%{transform:translateY(0)}32%{transform:translateY(0) rotate(-8deg)}48%{transform:translateY(0) rotate(8deg)}62%,82%{transform:translateY(0) rotate(0)}100%{transform:translateY(60px)}}
+@media(max-width:760px){.mk-mouse{width:54px;height:54px;right:12px}.mk-peek-window{left:46%}}
 </style>
 </head>
 <body>
@@ -49,6 +85,7 @@
  <a href="#top" class="brand" aria-label="Mokira home"><svg role="img" aria-label="Mokira origami logo"><use href="#mokira-mark"/></svg>Mokira</a>
  <nav class="nav-menu" id="site-menu" aria-label="Primary navigation"><a href="#story">Why Mokira</a><a href="#experience">The experience</a><a href="#freedom">Our philosophy</a></nav>
  <a href="#experience" class="nav-cta">Explore Mokira <span aria-hidden="true">↗</span></a>
+ <div class="mk-peek-window" aria-hidden="true"><div class="mk-peek" id="mk-peek"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur2" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head2" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur2)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head2)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></div></div>
  <button class="mobile-toggle" type="button" id="mobile-toggle" aria-label="Toggle navigation" aria-controls="site-menu" aria-expanded="false">☰</button>
 </header>
 <main id="top">
@@ -120,6 +157,45 @@ const data={
  control:{k:'04 / YOUR CONTROL',title:'Intelligence on your terms.',description:'A personal AI workspace should make you more capable without taking away your agency. Mokira starts with the choices and priorities that belong to you.',heading:'THE FREEDOM PRINCIPLES',items:['You set the priorities','Your tools and accounts inform your day','Your judgment remains at the center']}
 };
 const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=>b.addEventListener('click',()=>{const id=b.getAttribute('data-explore'),d=data[id];exButtons.forEach(x=>{let a=x===b;x.classList.toggle('active',a);x.setAttribute('aria-pressed',String(a))});document.getElementById('ex-kicker').textContent=d.k;document.getElementById('ex-title').textContent=d.title;document.getElementById('ex-description').textContent=d.description;document.getElementById('ex-list-title').textContent=d.heading;document.getElementById('ex-list').replaceChildren(...d.items.map(t=>{const li=document.createElement('li');li.textContent=t;return li}))}));
+})();
+</script>
+<div class="mk-mouse" id="mk-mouse" aria-hidden="true"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></div>
+<script>
+(() => {
+  const m = document.getElementById('mk-mouse'), peek = document.getElementById('mk-peek');
+  if (!m || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let busy = false;
+  const say = (text, ms) => {
+    const b = document.createElement('span'); b.className = 'mk-bubble'; b.textContent = text;
+    m.appendChild(b); setTimeout(() => b.remove(), ms);
+  };
+  const play = (cls, ms, then) => {
+    m.classList.remove(cls); void m.offsetWidth; m.classList.add(cls);
+    setTimeout(() => { m.classList.remove(cls); then && then(); }, ms);
+  };
+  // Greet on arrival.
+  busy = true; play('mk-greet', 3400, () => busy = false); setTimeout(() => say('Hi!', 2400), 700);
+  // Click: a hop.
+  m.querySelector('svg').addEventListener('click', () => { if (!busy) play('mk-hop', 1000); });
+  // Peek: off the corner, up from behind the page into the nav, back again.
+  const peekNow = () => {
+    busy = true; m.classList.add('mk-exit');
+    setTimeout(() => {
+      m.classList.remove('mk-exit'); m.classList.add('mk-away');
+      peek.classList.remove('on'); void peek.offsetWidth; peek.classList.add('on');
+      setTimeout(() => {
+        peek.classList.remove('on'); m.classList.remove('mk-away');
+        play('mk-enter', 1800, () => busy = false);
+      }, 4300);
+    }, 1800);
+  };
+  // Now and then: a scurry or a peek.
+  const next = () => setTimeout(() => {
+    if (!busy) { if (Math.random() < 0.5) { busy = true; play('mk-scurry', 2800, () => busy = false); } else peekNow(); }
+    next();
+  }, 20000 + Math.random() * 25000);
+  setTimeout(peekNow, 7000);
+  next();
 })();
 </script>
 </body>
