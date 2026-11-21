@@ -77,6 +77,8 @@
 .mk-think i:nth-child(2){width:9px;height:9px;margin-bottom:8px}
 .mk-think i:nth-child(3){width:13px;height:13px;margin-bottom:18px}
 .mk-confetti{position:absolute;left:50%;top:42%;width:6px;height:8px;margin:-4px 0 0 -3px;border-radius:1.5px;opacity:0;pointer-events:none}
+/* Said to his right, clear of the headline, when he presents the word "free". */
+.mk-bubble.mk-say-right{right:auto;left:calc(100% - 4px);bottom:52%}
 @media(max-width:760px){.mk-mouse{width:54px;height:54px;right:12px}}
 
 /* The side peek: behind the product preview (a layer under it), leaning out from its left edge. */
@@ -249,10 +251,11 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   };
   let busy = false;
 
-  const say = (text, ms) => {
-    const b = document.createElement('span'); b.className = 'mk-bubble'; b.textContent = text;
-    m.appendChild(b); setTimeout(() => b.remove(), ms);
+  const sayIn = (box) => (text, ms, where = '') => {
+    const b = document.createElement('span'); b.className = `mk-bubble ${where}`; b.textContent = text;
+    box.appendChild(b); setTimeout(() => b.remove(), ms);
   };
+  const say = sayIn(m);
   const cls = async (c, ms) => {
     m.classList.remove(c); void m.offsetWidth; m.classList.add(c);
     await wait(ms); m.classList.remove(c);
@@ -267,23 +270,35 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     { transform: 'translateY(3px) rotate(-360deg) scale(1.08,.88)', offset: 0.9 },
     { transform: 'translateY(0) rotate(-360deg) scale(1,1)' }];
 
-  // His parts, for the poses below: the right paw, the left one, his
-  // head and his eyes.
-  const paw = svg.querySelector('.mk-paw'), pawL = paw.previousElementSibling;
-  const head = paw.nextElementSibling, eyes = svg.querySelector('.mk-eyes');
   const REST = 'translate(0px,0px) rotate(0deg)';
+  const HOP = [
+    { transform: 'translateY(0px) scale(1,1)' }, { transform: 'translateY(0px) scale(1.06,.92)', offset: 0.15 },
+    { transform: 'translateY(-26px) scale(.96,1.05)', offset: 0.5 }, { transform: 'translateY(0px) scale(1,1)' }];
   // A pose turns about the part's bottom middle; hold() goes to a pose,
   // stays there, and comes back.
   const pose = (el, frames, opts) => anim(el, frames.map((f) => ({ transformOrigin: 'center bottom', ...f })), opts);
   const hold = (rest, there) => [{ transform: rest }, { transform: there, offset: 0.16 }, { transform: there, offset: 0.84 }, { transform: rest }];
-
-  // Little things he does in his corner, never the same twice running.
-  const FIDGETS = {
-    glance: () => anim(svg, [
-      { transform: 'rotate(0)' }, { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.3 },
-      { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.45 }, { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.72 },
-      { transform: 'rotate(0)' }], { duration: rnd(1400, 2400), easing: 'ease-in-out' }),
-    hop: () => cls('mk-hop', 1000),
+  // His tricks, for whichever copy of him is out: the one in the corner
+  // or the one up on the preview. `box` holds the copy and what it
+  // says; `svg` is its drawing.
+  const tricksOf = (box, svg) => {
+    const paw = svg.querySelector('.mk-paw'), pawL = paw.previousElementSibling;
+    const head = paw.nextElementSibling, eyes = svg.querySelector('.mk-eyes');
+    const say = sayIn(box);
+    // Presenting what is on his left: both paws held out toward it, one
+    // above the other, leaning back a little with his head and eyes
+    // turned to it.
+    const present = (duration) => {
+      const opts = { duration, easing: 'ease-in-out' };
+      return Promise.all([
+        pose(svg, hold('rotate(0deg)', 'rotate(5deg)'), opts),
+        pose(head, hold('rotate(0deg)', 'rotate(-7deg)'), opts),
+        anim(eyes, hold('translate(0px,0px)', 'translate(-2px,0px)'), opts),
+        pose(pawL, hold(REST, 'translate(-21px,-17px) rotate(-60deg)'), opts),
+        pose(paw, hold(REST, 'translate(-43px,3px) rotate(-70deg)'), opts),
+      ]);
+    };
+    return { say, present, tricks: {
     // A friendly wave: he leans a little, lifts a paw up beside his
     // head and waves it back and forth, with a hello now and then.
     wave: () => {
@@ -306,7 +321,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     think: async () => {
       const duration = rnd(2800, 3600);
       const dots = document.createElement('span'); dots.className = 'mk-think';
-      dots.innerHTML = '<i></i><i></i><i></i>'; m.appendChild(dots);
+      dots.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dots);
       [...dots.children].forEach((dot, k) => dot.animate(
         [{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }],
         { duration: 260, delay: duration * 0.2 + k * 320, fill: 'forwards', easing: 'ease-out' }));
@@ -322,7 +337,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
             { transform: REST }], { duration, easing: 'ease-in-out' }),
         ]);
       } finally { dots.remove(); }
-      if (Math.random() < 0.45) { say(pick(['Aha!', 'Oh! I know!', 'Got it!']), 1100); await cls('mk-hop', 1000); }
+      if (Math.random() < 0.45) { say(pick(['Aha!', 'Oh! I know!', 'Got it!']), 1100); await anim(svg, HOP, { duration: 500, iterations: 2, easing: 'ease-out' }); }
     },
     // A small celebration: two happy jumps with both paws in the air
     // and a puff of confetti.
@@ -333,7 +348,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
         const bit = document.createElement('i'); bit.className = 'mk-confetti';
         bit.style.background = pick(['#6a64a8', '#9d98d2', '#e98aa8', '#f3c3d6', '#f2c14e']);
         if (k % 3 === 0) bit.style.borderRadius = '50%';
-        m.appendChild(bit);
+        box.appendChild(bit);
         const angle = rnd(-Math.PI * 0.95, -Math.PI * 0.05), far = rnd(44, 88);
         const x = Math.cos(angle) * far, y = Math.sin(angle) * far;
         bit.animate([
@@ -353,6 +368,17 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
         pose(pawL, hold(REST, 'translate(-27px,-35px) rotate(-24deg)'), { duration, easing: 'ease-in-out' }),
       ]);
     },
+    } };
+  };
+
+  // Little things he does in his corner, never the same twice running.
+  const FIDGETS = {
+    glance: () => anim(svg, [
+      { transform: 'rotate(0)' }, { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.3 },
+      { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.45 }, { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.72 },
+      { transform: 'rotate(0)' }], { duration: rnd(1400, 2400), easing: 'ease-in-out' }),
+    hop: () => cls('mk-hop', 1000),
+    ...tricksOf(m, svg).tricks,
     stretch: () => anim(svg, [
       { transform: 'scale(1,1)' }, { transform: 'scale(.93,1.13)', offset: 0.4 },
       { transform: 'scale(1.05,.93)', offset: 0.7 }, { transform: 'scale(1,1)' }], { duration: rnd(1300, 1900), easing: 'ease-in-out' }),
@@ -389,9 +415,48 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     top:    { place: (at) => ({ left: `${at}%`, right: 'auto', top: '0', bottom: 'auto' }), move: (d) => `translateY(${-d}px)`, base: 0 },
     bottom: { place: (at) => ({ left: `${at}%`, right: 'auto', top: 'auto', bottom: '0' }), move: (d) => `translateY(${d}px)`, base: 180 },
   };
+  // Every so often from the preview's left side: out level with the
+  // headline's last line, a walk over to the word "free", both paws
+  // held out to present it, and back behind the preview. Only where
+  // the word sits to the preview's left, level with it.
+  const free = document.querySelector('.hero h1 em');
+  const presentFree = async () => {
+    if (!free) return false;
+    const zone = side.parentElement.getBoundingClientRect(), word = free.getBoundingClientRect();
+    const size = side.offsetHeight, font = getComputedStyle(free);
+    // The word's baseline: the bottom of its box less the font's descent.
+    const pen = document.createElement('canvas').getContext('2d');
+    pen.font = `${font.fontStyle} ${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+    const baseline = word.bottom - (pen.measureText('free.').fontBoundingBoxDescent || word.height * 0.22);
+    const top = baseline - zone.top - size * (116.5 / 120);
+    const walk = word.right + 2 - zone.left;
+    if (walk > -140 || top < 20 || top > zone.height - size - 20) return false;
+    Object.assign(side.style, { left: '0', right: 'auto', top: `${top}px`, bottom: 'auto' });
+    const at = (x, a = 0) => `translateX(${x}px) rotate(${a}deg)`;
+    const run = async (from, to) => {
+      side.classList.add('mk-run');
+      await anim(side, [{ transform: at(from) }, { transform: at(to) }], { duration: Math.abs(to - from) * rnd(5.5, 7), easing: 'ease-in-out' });
+      side.classList.remove('mk-run'); side.style.transform = at(to);
+    };
+    side.style.transform = at(34);
+    await anim(side, [
+      { transform: at(34) }, { transform: at(-46, -8), offset: 0.4 },
+      { transform: at(-46, -14), offset: 0.7 }, { transform: at(-46) }], { duration: rnd(1500, 2100), easing: 'ease-in-out' });
+    side.style.transform = at(-46);
+    await run(-46, walk);
+    await wait(rnd(150, 350));
+    const duration = rnd(2600, 3400);
+    if (Math.random() < 0.5) perch.say(pick(['Ta-da!', 'This part!', 'My favourite word.']), duration - 400, 'mk-say-right');
+    await perch.present(duration);
+    await wait(rnd(150, 400));
+    await run(walk, 34);
+    return true;
+  };
+
   let lastSide = '';
   const peekSide = () => out(side, async () => {
     const name = pick(Object.keys(SIDES).filter((k) => k !== lastSide)); lastSide = name;
+    if (name === 'left' && Math.random() < 0.5 && await presentFree()) return;
     const sideOf = SIDES[name];
     // Along the side, clear of the corners (and of the note at the
     // preview's bottom left).
@@ -409,30 +474,42 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await anim(side, peekFrames(hidden, shown, 9, 8), { duration: rnd(3000, 5600), easing: 'ease-in-out' });
   });
   // Now and then: up over the preview's top edge, out on top of it, a
-  // backflip (or two) up there, a look around, and back down behind it.
+  // trick up there (a backflip or two, a wave, a think, a celebration),
+  // a look around, and back down behind it.
   const sideSvg = side.querySelector('svg');
+  const perch = tricksOf(side, sideSvg);
+  let lastAct = '';
   const peekClimb = () => out(side, async () => {
     Object.assign(side.style, SIDES.top.place(rnd(12, 80)));
     const hidden = 'translateY(34px) rotate(0)';
     const peek = 'translateY(-40px) rotate(0)';
-    const stand = 'translateY(-80px) rotate(0)';
+    // Standing, the soles of his feet (116.5 of the drawing's 120 units
+    // down) rest on the frame's top edge, a pixel into it.
+    const up = side.offsetHeight * (116.5 / 120) - 1;
+    const stand = `translateY(${-up}px) rotate(0)`;
     side.style.transform = hidden;
     await anim(side, [
       { transform: hidden }, { transform: peek, offset: 0.3 },
       { transform: `translateY(-40px) rotate(${rnd(-10, 10)}deg)`, offset: 0.5 }, { transform: peek, offset: 0.65 },
-      { transform: 'translateY(-92px) rotate(0)', offset: 0.85 }, { transform: stand }],
+      { transform: `translateY(${-up - 12}px) rotate(0)`, offset: 0.85 }, { transform: stand }],
       { duration: rnd(2200, 3000), easing: 'ease-in-out' });
     side.style.transform = stand;
     await wait(rnd(300, 800));
-    const flips = Math.random() < 0.35 ? 2 : 1;
-    for (let k = 0; k < flips; k++) {
-      await anim(sideSvg, flipFrames(), { duration: rnd(950, 1150), easing: 'cubic-bezier(.3,.1,.3,1)' });
-      await wait(rnd(150, 400));
+    const act = pick(['flip', 'flip', 'wave', 'think', 'celebrate'].filter((k) => k !== lastAct)); lastAct = act;
+    if (act === 'flip') {
+      const flips = Math.random() < 0.35 ? 2 : 1;
+      for (let k = 0; k < flips; k++) {
+        await anim(sideSvg, flipFrames(), { duration: rnd(950, 1150), easing: 'cubic-bezier(.3,.1,.3,1)' });
+        await wait(rnd(150, 400));
+      }
+    } else {
+      await perch.tricks[act]();
+      await wait(rnd(200, 500));
     }
     await anim(sideSvg, [
       { transform: 'rotate(0)' }, { transform: `rotate(${rnd(-12, -6)}deg)`, offset: 0.35 },
       { transform: `rotate(${rnd(6, 12)}deg)`, offset: 0.7 }, { transform: 'rotate(0)' }], { duration: rnd(1200, 1800), easing: 'ease-in-out' });
-    await anim(side, [{ transform: stand }, { transform: 'translateY(-104px) rotate(0)', offset: 0.35 }, { transform: hidden }],
+    await anim(side, [{ transform: stand }, { transform: `translateY(${-up - 24}px) rotate(0)`, offset: 0.35 }, { transform: hidden }],
       { duration: rnd(800, 1100), easing: 'ease-in' });
     side.style.transform = hidden;
   });
@@ -489,18 +566,21 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await anim(nav, peekFrames(hidden, shown, 12, 4), { duration: rnd(3200, 5400), easing: 'ease-in-out' });
   });
 
-  // A peek: off the corner, out at one of his spots (sometimes two,
-  // one after the other), then home again.
+  // A trip: off the corner, out at two to four of his spots one after
+  // the other (never the same spot twice running), then home again.
+  let lastSpot = null;
   const goPeek = async () => {
     busy = true;
     m.classList.add('mk-exit'); await wait(1800);
     m.classList.remove('mk-exit'); m.classList.add('mk-away');
     const spots = [peekNav, peekSide, peekButton, peekEdge, peekClimb];
-    const first = pick(spots);
-    await wait(rnd(200, 1400));
-    await first();
-    if (Math.random() < 0.3) { await wait(rnd(600, 1800)); await pick(spots.filter((f) => f !== first))(); }
-    await wait(rnd(200, 1200));
+    const stops = pick([2, 3, 3, 4]);
+    await wait(rnd(200, 1000));
+    for (let k = 0; k < stops; k++) {
+      const spot = pick(spots.filter((f) => f !== lastSpot)); lastSpot = spot;
+      await spot();
+      await wait(rnd(400, 1500));
+    }
     hideCopies(); m.style.visibility = '';
     m.classList.remove('mk-away'); await cls('mk-enter', 1800);
     busy = false;
@@ -521,14 +601,15 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   (async () => {
     busy = true; m.classList.add('mk-greet'); setTimeout(() => say("Hi, I'm Apeko!", 3000), 700);
     await wait(3400); m.classList.remove('mk-greet'); busy = false;
-    await wait(rnd(2500, 5000));
+    await wait(rnd(1500, 3000));
+    // Mostly out and about; the corner is where he rests between trips.
     for (;;) {
       if (!busy) {
         const r = Math.random();
-        if (r < 0.55) await goPeek();
+        if (r < 0.8) await goPeek();
         else await fidget();
       }
-      await wait(rnd(3500, 11000));
+      await wait(rnd(2000, 5500));
     }
   })();
 })();
