@@ -109,6 +109,9 @@
 .mk-peek{position:absolute;left:0;top:0;width:72px;height:72px;transform:translateY(60px)}
 @media(max-width:760px){.mk-peek-window{left:46%}}
 
+/* The sparks where he bumps into the wordmark. */
+.mk-spark{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#fff;pointer-events:none}
+
 /* One mouse at a time: the peeking copies are invisible except while
    peeking (the script shows one, then hides it again). */
 .mk-side,.mk-edge,.mk-peek,.mk-btn-peek{visibility:hidden}
@@ -558,7 +561,104 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   // somewhere new each time between the menu and the button.
   const nav = document.getElementById('mk-peek');
   const navWindow = nav.parentElement;
+  // Now and then in the nav: a peek up at the left, a hop all the way
+  // in to stand on the bar's bottom edge, a run at the Mokira wordmark,
+  // a bump (the logo jolts, sparks fly and the startled crane flaps its
+  // wings), a bounce back off it onto his feet, a dizzy shake of the
+  // head, and down again. Only where there is room beside the logo.
+  const brand = document.querySelector('.site-nav .brand');
+  const navSvg = nav.querySelector('svg');
+  const flapCrane = (mark) => {
+    const flap = (part, angles) => {
+      const el = mark.querySelector(part);
+      if (el) el.animate(angles.map((a) => ({ transform: `rotate(${a}deg)` })), { duration: 800, iterations: 2, easing: 'ease-in-out' });
+    };
+    flap('.crane-flap-wing', [0, -14, 4, -9, 0]);
+    flap('.crane-flap-facet', [0, 12, -3, 8, 0]);
+    flap('.crane-flap-head', [0, 10, -4, 0]);
+  };
+  const bumpLogo = async () => {
+    const header = navWindow.parentElement, bar = header.getBoundingClientRect(), logo = brand.getBoundingClientRect();
+    const next = [...header.children].map((el) => el.getBoundingClientRect())
+      .filter((r) => r.width && r.left > logo.right && r.height > 20).sort((a, b) => a.left - b.left)[0];
+    const room = (next ? next.left : bar.right) - logo.right;
+    if (room < 150) return false;
+    // The window he shows in: from just inside the wordmark's right end
+    // (so his ear can touch it) out to where he first comes up.
+    // He is a little smaller in here, so he can stand in the bar whole.
+    const height = bar.height, size = Math.round(Math.min(nav.offsetWidth, height * 0.74)), inset = 5;
+    const width = Math.min(200, room - 8) + inset;
+    Object.assign(navWindow.style, { left: `${logo.right - bar.left - inset}px`, width: `${width}px`, height: `${height}px` });
+    nav.style.width = nav.style.height = `${size}px`;
+    // y: standing, the soles of his feet on the bar's bottom edge;
+    // peek: only his head above it; down: out of sight below.
+    const far = width - size, y = height - size * (116.5 / 120), peek = height - size * 0.56, down = height + 14;
+    const hop = Math.min(16, y + size * 0.14);
+    const at = (x, yy, a = 0) => `translate(${x}px,${yy}px) rotate(${a}deg)`;
+    try {
+      // A peek up, and a look around.
+      nav.style.transform = at(far, down);
+      await anim(nav, [
+        { transform: at(far, down) }, { transform: at(far, peek), offset: 0.4 }, { transform: at(far, peek, 9), offset: 0.6 },
+        { transform: at(far, peek, -7), offset: 0.82 }, { transform: at(far, peek) }], { duration: rnd(1400, 1900), easing: 'ease-in-out' });
+      nav.style.transform = at(far, peek);
+      // A hop all the way in: he lands on the bar's edge and stands.
+      await anim(nav, [
+        { transform: at(far, peek) }, { transform: at(far, peek + 5), offset: 0.2 },
+        { transform: at(far, y - hop * 0.6), offset: 0.6 }, { transform: at(far, y) }], { duration: rnd(520, 640), easing: 'ease-out' });
+      nav.style.transform = at(far, y);
+      await anim(navSvg, [
+        { transformOrigin: 'center bottom', transform: 'scale(1,1)' }, { transformOrigin: 'center bottom', transform: 'scale(1.07,.92)', offset: 0.35 },
+        { transformOrigin: 'center bottom', transform: 'scale(1,1)' }], { duration: 240, easing: 'ease-out' });
+      await wait(rnd(500, 900));
+      // A little wind-up, then the run at the wordmark.
+      nav.classList.add('mk-run');
+      try {
+        await anim(nav, [{ transform: at(far, y) }, { transform: at(far + 5, y, 7), offset: 0.3 }, { transform: at(0, y, -9) }],
+          { duration: rnd(560, 680), easing: 'cubic-bezier(.5,0,.9,.6)' });
+      } finally { nav.classList.remove('mk-run'); }
+      nav.style.transform = at(0, y, -9);
+      // The bump.
+      flapCrane(brand);
+      brand.animate([
+        { transform: 'translateX(0px) rotate(0deg)' }, { transform: 'translateX(-6px) rotate(-2deg)', offset: 0.18 },
+        { transform: 'translateX(3px) rotate(1deg)', offset: 0.45 }, { transform: 'translateX(-2px) rotate(-0.5deg)', offset: 0.7 },
+        { transform: 'translateX(0px) rotate(0deg)' }], { duration: 620, easing: 'ease-out' });
+      for (let k = 0; k < 5; k++) {
+        const spark = document.createElement('i'); spark.className = 'mk-spark';
+        spark.style.left = `${inset}px`; spark.style.top = `${y + size * 0.3}px`;
+        navWindow.appendChild(spark);
+        const angle = rnd(-Math.PI * 0.9, -Math.PI * 0.1), reach = rnd(12, 24);
+        const gone = () => spark.remove();
+        spark.animate([
+          { transform: 'translate(0px,0px) scale(1)', opacity: 1 },
+          { transform: `translate(${Math.cos(angle) * reach}px,${Math.sin(angle) * reach}px) scale(.3)`, opacity: 0 }],
+          { duration: rnd(380, 560), easing: 'ease-out', fill: 'forwards' }).finished.then(gone, gone);
+      }
+      await anim(navSvg, [
+        { transformOrigin: 'left center', transform: 'scale(1,1)' }, { transformOrigin: 'left center', transform: 'scale(.76,1.14)', offset: 0.45 },
+        { transformOrigin: 'left center', transform: 'scale(1,1)' }], { duration: 170, easing: 'ease-out' });
+      // The bounce: thrown back in an arc, one more small hop, and still.
+      await anim(nav, [
+        { transform: at(0, y, -9) }, { transform: at(far * 0.5, y - hop, 22), offset: 0.38 },
+        { transform: at(far * 0.8, y + 3, 8), offset: 0.66 }, { transform: at(far * 0.92, y - 6, 3), offset: 0.82 },
+        { transform: at(far, y) }], { duration: rnd(820, 980), easing: 'ease-out' });
+      nav.style.transform = at(far, y);
+      // Dizzy.
+      await anim(navSvg, [
+        { transform: 'rotate(0deg)' }, { transform: 'rotate(-11deg)', offset: 0.18 }, { transform: 'rotate(10deg)', offset: 0.38 },
+        { transform: 'rotate(-8deg)', offset: 0.58 }, { transform: 'rotate(5deg)', offset: 0.78 }, { transform: 'rotate(0deg)' }],
+        { duration: rnd(1200, 1500), easing: 'ease-in-out' });
+      await wait(rnd(200, 500));
+      await anim(nav, [{ transform: at(far, y) }, { transform: at(far, down) }], { duration: rnd(450, 600), easing: 'ease-in' });
+    } finally {
+      nav.style.transform = nav.style.width = nav.style.height = '';
+      navWindow.style.width = navWindow.style.height = '';
+    }
+    return true;
+  };
   const peekNav = () => out(nav, async () => {
+    if (Math.random() < 0.4 && await bumpLogo()) return;
     navWindow.style.left = `${rnd(window.innerWidth < 760 ? 34 : 62, window.innerWidth < 760 ? 58 : 80)}%`;
     const up = rnd(-2, 6);
     const hidden = () => 'translateY(60px) rotate(0)';
