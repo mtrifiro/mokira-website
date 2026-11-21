@@ -109,6 +109,10 @@
 .mk-peek{position:absolute;left:0;top:0;width:72px;height:72px;transform:translateY(60px)}
 @media(max-width:760px){.mk-peek-window{left:46%}}
 
+/* The stars that twinkle on the word "free" while he presents it. */
+.hero h1 em{position:relative}
+.mk-twinkle{position:absolute;opacity:0;pointer-events:none;clip-path:polygon(50% 0,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0 50%,37% 37%)}
+
 /* The sparks where he bumps into the wordmark. */
 .mk-spark{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#fff;pointer-events:none}
 
@@ -423,6 +427,28 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   // held out to present it, and back behind the preview. Only where
   // the word sits to the preview's left, level with it.
   const free = document.querySelector('.hero h1 em');
+  // The word sparkles while he presents it: a soft gold glow, and
+  // four-pointed stars twinkling over and around it one after another.
+  const sparkle = (el, duration) => {
+    const glow = (a) => `0 0 24px rgba(242,193,78,${a})`;
+    el.animate([
+      { textShadow: glow(0) }, { textShadow: glow(0.75), offset: 0.25 },
+      { textShadow: glow(0.75), offset: 0.75 }, { textShadow: glow(0) }], { duration, easing: 'ease-in-out' });
+    for (let k = 0; k < 26; k++) {
+      const star = document.createElement('i'); star.className = 'mk-twinkle'; star.setAttribute('aria-hidden', 'true');
+      const size = rnd(14, 32);
+      Object.assign(star.style, {
+        width: `${size}px`, height: `${size}px`, margin: `${-size / 2}px 0 0 ${-size / 2}px`,
+        left: `${rnd(-4, 104)}%`, top: `${rnd(4, 92)}%`, background: pick(['#f2c14e', '#f2c14e', '#f6d98a', '#e98aa8', '#b3b4f7']),
+      });
+      el.appendChild(star);
+      const gone = () => star.remove();
+      star.animate([
+        { transform: 'scale(0) rotate(0deg)', opacity: 0 }, { transform: 'scale(1) rotate(35deg)', opacity: 1, offset: 0.35 },
+        { transform: 'scale(1) rotate(55deg)', opacity: 1, offset: 0.65 }, { transform: 'scale(0) rotate(90deg)', opacity: 0 }],
+        { duration: rnd(800, 1300), delay: rnd(0.03, 0.62) * duration, easing: 'ease-in-out', fill: 'both' }).finished.then(gone, gone);
+    }
+  };
   const presentFree = async () => {
     if (!free) return false;
     const zone = side.parentElement.getBoundingClientRect(), word = free.getBoundingClientRect();
@@ -450,6 +476,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await wait(rnd(150, 350));
     const duration = rnd(2600, 3400);
     if (Math.random() < 0.5) perch.say(pick(['Ta-da!', 'This part!', 'My favourite word.']), duration - 400, 'mk-say-right');
+    sparkle(free, duration);
     await perch.present(duration);
     await wait(rnd(150, 400));
     await run(walk, 34);
