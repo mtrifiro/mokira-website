@@ -76,6 +76,13 @@
 .mk-side.on{animation:mk-side 4.4s ease-in-out forwards}
 @keyframes mk-side{0%{transform:translateX(34px) rotate(0)}18%{transform:translateX(-50px) rotate(-14deg)}34%{transform:translateX(-50px) rotate(-6deg)}50%{transform:translateX(-50px) rotate(-18deg)}66%{transform:translateX(-50px) rotate(-10deg)}84%{transform:translateX(-50px) rotate(-12deg)}100%{transform:translateX(34px) rotate(0)}}
 @media(max-width:760px){.mk-side{top:30%;width:60px;height:60px}}
+
+/* The button peek: a window sitting on the button's top edge shows only what rises above it, so he seems to come up from behind the button. */
+.mk-btn-wrap{position:relative;display:inline-flex}
+.mk-btn-window{position:absolute;left:26px;bottom:100%;width:64px;height:44px;overflow:hidden;pointer-events:none}
+.mk-btn-peek{position:absolute;left:0;top:0;width:64px;height:64px;display:block;transform:translateY(52px)}
+.mk-btn-peek.on{animation:mk-btn-peek 4.2s ease-in-out forwards}
+@keyframes mk-btn-peek{0%{transform:translateY(52px)}18%{transform:translateY(4px)}32%{transform:translateY(4px) rotate(-8deg)}48%{transform:translateY(4px) rotate(8deg)}62%,82%{transform:translateY(4px) rotate(0)}100%{transform:translateY(52px)}}
 </style>
 </head>
 <body>
@@ -94,7 +101,7 @@
     <div class="eyebrow">PRIVATE FRONTIER INTELLIGENCE</div>
     <h1>Intelligence should set you <em>free.</em></h1>
     <p class="hero-description">Your day shouldn't be a collection of disconnected apps. Mokira brings your inbox, calendar, to-dos, and AI agents into one thoughtful place—so you can spend less time managing life and more time living it.</p>
-    <div class="hero-buttons"><a href="#experience" class="primary">Explore your new day <span aria-hidden="true">↗</span></a><a href="#story" class="secondary">Discover the idea <span aria-hidden="true">↘</span></a></div>
+    <div class="hero-buttons"><span class="mk-btn-wrap"><a href="#experience" class="primary">Explore your new day <span aria-hidden="true">↗</span></a><span class="mk-btn-window" aria-hidden="true"><span class="mk-btn-peek" id="mk-btn-peek"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur4" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head4" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur4)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head4)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head4)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></span></span></span><a href="#story" class="secondary">Discover the idea <span aria-hidden="true">↘</span></a></div>
     <div class="hero-footnote">ONE PERSONAL WORKSPACE <span>·</span> INTELLIGENCE ON YOUR TERMS</div>
   </div>
   <div class="device-zone" aria-label="Illustrative Mokira product interface">
@@ -181,13 +188,18 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   // Peek: off the corner, then out from behind the hero's product
   // preview on its left side, a look around, back behind it, and home.
   const side = document.getElementById('mk-side');
+  // Or up from behind the "Explore your new day" button, over its top
+  // edge. He takes turns between the two.
+  const btn = document.getElementById('mk-btn-peek');
+  let turn = 0;
   const peekNow = () => {
+    const spot = turn++ % 2 === 0 ? side : btn;
     busy = true; m.classList.add('mk-exit');
     setTimeout(() => {
       m.classList.remove('mk-exit'); m.classList.add('mk-away');
-      side.classList.remove('on'); void side.offsetWidth; side.classList.add('on');
+      spot.classList.remove('on'); void spot.offsetWidth; spot.classList.add('on');
       setTimeout(() => {
-        side.classList.remove('on'); m.classList.remove('mk-away');
+        spot.classList.remove('on'); m.classList.remove('mk-away');
         play('mk-enter', 1800, () => busy = false);
       }, 4500);
     }, 1800);
