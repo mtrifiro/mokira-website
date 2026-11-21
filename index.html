@@ -93,6 +93,11 @@
 .mk-edge{position:fixed;left:0;top:55%;width:72px;height:72px;z-index:30;pointer-events:none;transform:translateX(-96px)}
 .mk-edge-svg{display:block;width:100%;height:100%;overflow:visible}
 @media(max-width:760px){.mk-edge{width:56px;height:56px}}
+
+/* The nav peek: a window along the nav's bottom edge shows only what rises above the page. */
+.mk-peek-window{position:absolute;left:71%;bottom:0;width:72px;height:46px;overflow:hidden;pointer-events:none}
+.mk-peek{position:absolute;left:0;top:0;width:72px;height:72px;transform:translateY(60px)}
+@media(max-width:760px){.mk-peek-window{left:46%}}
 </style>
 </head>
 <body>
@@ -103,6 +108,7 @@
  <a href="#top" class="brand" aria-label="Mokira home"><svg role="img" aria-label="Mokira origami logo"><use href="#mokira-mark"/></svg>Mokira</a>
  <nav class="nav-menu" id="site-menu" aria-label="Primary navigation"><a href="#story">Why Mokira</a><a href="#experience">The experience</a><a href="#freedom">Our philosophy</a></nav>
  <a href="#experience" class="nav-cta">Explore Mokira <span aria-hidden="true">↗</span></a>
+ <div class="mk-peek-window" aria-hidden="true"><div class="mk-peek" id="mk-peek"><svg class="mk-svg" viewBox="0 0 120 120"><defs><radialGradient id="mk-fur2" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#9d98d2"/><stop offset="1" stop-color="#6a64a8"/></radialGradient><radialGradient id="mk-head2" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#a6a1d8"/><stop offset="1" stop-color="#716bb0"/></radialGradient></defs><g class="mk-breathe"><path class="mk-tail" d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur2)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse class="mk-paw" cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head2)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g class="mk-eyes"><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g class="mk-wl" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g class="mk-wr" stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg></div></div>
  <button class="mobile-toggle" type="button" id="mobile-toggle" aria-label="Toggle navigation" aria-controls="site-menu" aria-expanded="false">☰</button>
 </header>
 <main id="top">
@@ -290,13 +296,25 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await anim(edge, peekFrames(hidden, shown, 10, 10), { duration: rnd(3000, 5200), easing: 'ease-in-out' });
   };
 
+  // Up from behind the page into the nav bar, along its bottom edge,
+  // somewhere new each time between the menu and the button.
+  const nav = document.getElementById('mk-peek');
+  const navWindow = nav.parentElement;
+  const peekNav = async () => {
+    navWindow.style.left = `${rnd(window.innerWidth < 760 ? 34 : 62, window.innerWidth < 760 ? 58 : 80)}%`;
+    const up = rnd(-2, 6);
+    const hidden = () => 'translateY(60px) rotate(0)';
+    const shown = (a, more = 0) => `translateY(${up - more}px) rotate(${a}deg)`;
+    await anim(nav, peekFrames(hidden, shown, 12, 4), { duration: rnd(3200, 5400), easing: 'ease-in-out' });
+  };
+
   // A peek: off the corner, out at one of his spots (sometimes two,
   // one after the other), then home again.
   const goPeek = async () => {
     busy = true;
     m.classList.add('mk-exit'); await wait(1800);
     m.classList.remove('mk-exit'); m.classList.add('mk-away');
-    const spots = [peekSide, peekButton, peekEdge];
+    const spots = [peekNav, peekSide, peekButton, peekEdge];
     const first = pick(spots);
     await wait(rnd(200, 1400));
     await first();
