@@ -98,6 +98,10 @@
 .mk-peek-window{position:absolute;left:71%;bottom:0;width:72px;height:46px;overflow:hidden;pointer-events:none}
 .mk-peek{position:absolute;left:0;top:0;width:72px;height:72px;transform:translateY(60px)}
 @media(max-width:760px){.mk-peek-window{left:46%}}
+
+/* One mouse at a time: the peeking copies are invisible except while
+   peeking (the script shows one, then hides it again). */
+.mk-side,.mk-edge,.mk-peek,.mk-btn-peek{visibility:hidden}
 </style>
 </head>
 <body>
@@ -197,6 +201,14 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   const pick = (list) => list[Math.floor(Math.random() * list.length)];
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const anim = (el, frames, opts) => el.animate(frames, { fill: 'none', ...opts }).finished;
+  // One mouse at a time: a peeking copy shows only for its own peek, and
+  // the corner mouse is hidden while any copy is out.
+  const copies = ['mk-side', 'mk-edge', 'mk-peek', 'mk-btn-peek'].map((id) => document.getElementById(id));
+  const hideCopies = () => copies.forEach((c) => { c.getAnimations().forEach((a) => a.cancel()); c.style.visibility = 'hidden'; });
+  const out = async (el, run) => {
+    hideCopies(); m.style.visibility = 'hidden'; el.style.visibility = 'visible';
+    try { await run(); } finally { el.style.visibility = 'hidden'; }
+  };
   let busy = false;
 
   const say = (text, ms) => {
@@ -224,6 +236,16 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     twirl: () => anim(svg, [
       { transform: 'translateY(0) rotate(0)' }, { transform: 'translateY(-14px) rotate(180deg)', offset: 0.5 },
       { transform: 'translateY(0) rotate(360deg)' }], { duration: rnd(800, 1100), easing: 'ease-in-out' }),
+    // A backflip: crouch, spring up and over backwards, land with a squash.
+    backflip: () => anim(svg, [
+      { transform: 'translateY(0) rotate(0) scale(1,1)' },
+      { transform: 'translateY(4px) rotate(0) scale(1.08,.86)', offset: 0.14 },
+      { transform: 'translateY(-34px) rotate(-120deg) scale(.96,1.05)', offset: 0.38 },
+      { transform: 'translateY(-46px) rotate(-200deg) scale(1,1)', offset: 0.55 },
+      { transform: 'translateY(-14px) rotate(-330deg) scale(1,1)', offset: 0.8 },
+      { transform: 'translateY(3px) rotate(-360deg) scale(1.08,.88)', offset: 0.9 },
+      { transform: 'translateY(0) rotate(-360deg) scale(1,1)' }],
+      { duration: rnd(950, 1200), easing: 'cubic-bezier(.3,.1,.3,1)' }),
     shuffle: () => anim(m, [
       { transform: 'translateX(0)' }, { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.4 },
       { transform: `translateX(${rnd(-40, -16)}px)`, offset: 0.6 }, { transform: 'translateX(0)' }], { duration: rnd(1500, 2300), easing: 'ease-in-out' }),
@@ -256,7 +278,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     bottom: { place: (at) => ({ left: `${at}%`, right: 'auto', top: 'auto', bottom: '0' }), move: (d) => `translateY(${d}px)`, base: 180 },
   };
   let lastSide = '';
-  const peekSide = async () => {
+  const peekSide = () => out(side, async () => {
     const name = pick(Object.keys(SIDES).filter((k) => k !== lastSide)); lastSide = name;
     const sideOf = SIDES[name];
     // Along the side, clear of the corners (and of the note at the
@@ -273,14 +295,14 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
       await wait(rnd(300, 900));
     }
     await anim(side, peekFrames(hidden, shown, 9, 8), { duration: rnd(3000, 5600), easing: 'ease-in-out' });
-  };
+  });
   const LINES = [
     'Psst… try the app!', "Your day's waiting in here →", 'Go on, take a look!',
     "It's cozy in here. Come in!", 'Try Mokira — I saved you a seat.', 'Click it! I dare you.',
     'Want to see your day?',
   ];
   let lastLine = '';
-  const peekButton = async () => {
+  const peekButton = () => out(btn, async () => {
     const up = rnd(0, 7);
     const hidden = () => 'translateY(52px) rotate(0)';
     const shown = (a, more = 0) => `translateY(${up - more}px) rotate(${a}deg)`;
@@ -289,12 +311,13 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     setTimeout(() => { btnSay.textContent = line; btnSay.classList.add('show'); }, duration * 0.2);
     setTimeout(() => btnSay.classList.remove('show'), duration * 0.82);
     await anim(btn, peekFrames(hidden, shown, 11, 4), { duration, easing: 'ease-in-out' });
-  };
+    btnSay.classList.remove('show');
+  });
 
   // From the window's left edge, at a height of his own choosing: a peek
   // in, or now and then all the way out for a look around and back.
   const edge = document.getElementById('mk-edge');
-  const peekEdge = async () => {
+  const peekEdge = () => out(edge, async () => {
     edge.style.top = `${rnd(28, 78)}vh`;
     const hidden = () => 'translateX(-96px) rotate(0)';
     if (Math.random() < 0.35) {
@@ -311,19 +334,19 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     const out = rnd(-34, -14);
     const shown = (a, more = 0) => `translateX(${out + more}px) rotate(${a + 12}deg)`;
     await anim(edge, peekFrames(hidden, shown, 10, 10), { duration: rnd(3000, 5200), easing: 'ease-in-out' });
-  };
+  });
 
   // Up from behind the page into the nav bar, along its bottom edge,
   // somewhere new each time between the menu and the button.
   const nav = document.getElementById('mk-peek');
   const navWindow = nav.parentElement;
-  const peekNav = async () => {
+  const peekNav = () => out(nav, async () => {
     navWindow.style.left = `${rnd(window.innerWidth < 760 ? 34 : 62, window.innerWidth < 760 ? 58 : 80)}%`;
     const up = rnd(-2, 6);
     const hidden = () => 'translateY(60px) rotate(0)';
     const shown = (a, more = 0) => `translateY(${up - more}px) rotate(${a}deg)`;
     await anim(nav, peekFrames(hidden, shown, 12, 4), { duration: rnd(3200, 5400), easing: 'ease-in-out' });
-  };
+  });
 
   // A peek: off the corner, out at one of his spots (sometimes two,
   // one after the other), then home again.
@@ -337,6 +360,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await first();
     if (Math.random() < 0.3) { await wait(rnd(600, 1800)); await pick(spots.filter((f) => f !== first))(); }
     await wait(rnd(200, 1200));
+    hideCopies(); m.style.visibility = '';
     m.classList.remove('mk-away'); await cls('mk-enter', 1800);
     busy = false;
   };
@@ -357,7 +381,7 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     if (busy) return;
     busy = true;
     if (Math.random() < 0.5) say(pick(['Eep!', 'Hehe!', 'Hi!', '♥']), 1200);
-    await pick([FIDGETS.hop, FIDGETS.twirl, FIDGETS.wave])();
+    await pick([FIDGETS.hop, FIDGETS.twirl, FIDGETS.wave, FIDGETS.backflip, FIDGETS.backflip])();
     busy = false;
   });
 
