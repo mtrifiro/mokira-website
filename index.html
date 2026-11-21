@@ -684,8 +684,117 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     }
     return true;
   };
+  // Now and then, at the far right of the nav: up beside the button, a
+  // hop in to stand, then paws on it and a lean. It will not budge at
+  // first, then goes in three heaves right across the bar to the logo.
+  // A proud little hop, the button quivers, springs back home and bowls
+  // him along with it; a dizzy shake of the head, and down again.
+  // Only on a wide bar, with room to stand to the right of the button.
+  const cta = document.querySelector('.site-nav .nav-cta');
+  const pushButton = async () => {
+    const header = navWindow.parentElement, bar = header.getBoundingClientRect();
+    const logo = brand.getBoundingClientRect(), btn = cta.getBoundingClientRect();
+    const d = Math.round(btn.left - logo.right - 28);
+    // He is a little smaller in here, and smaller still where the room
+    // to the right of the button is tight, so that he stands in it whole.
+    const height = bar.height, room = bar.right - btn.right;
+    const size = Math.round(Math.min(nav.offsetWidth, height * 0.74, (room - 9) / 0.82));
+    if (window.innerWidth <= 760 || !btn.width || size < 40 || d < 150) return false;
+    const start = logo.right + 8;
+    Object.assign(navWindow.style, { left: `${start - bar.left}px`, width: `${bar.right - start}px`, height: `${height}px` });
+    nav.style.width = nav.style.height = `${size}px`;
+    // touch: how far in from his left side his paws meet the button.
+    const touch = size * 0.1, y = height - size * (116.5 / 120), peek = height - size * 0.56, down = height + 14;
+    const x0 = btn.right - start + 9 - touch, x1 = btn.right - start - 1 - touch;
+    const hop = Math.min(16, y + size * 0.14);
+    const at = (x, yy, a = 0) => `translate(${x}px,${yy}px) rotate(${a}deg)`;
+    const paw = navSvg.querySelector('.mk-paw'), pawL = paw.previousElementSibling, eyes = navSvg.querySelector('.mk-eyes');
+    const held = [];
+    const keep = (el, frames, opts) => { const a = el.animate(frames, { fill: 'forwards', ...opts }); held.push(a); return a.finished; };
+    const letGo = () => { held.forEach((a) => a.cancel()); held.length = 0; };
+    const PAW = 'translate(-59px,-22px) rotate(-80deg)', PAWL = 'translate(-37px,-36px) rotate(-80deg)', LOOK = 'translate(-2.5px,0px)';
+    cta.style.transition = 'none';
+    try {
+      // A peek up beside the button, and a look at it.
+      nav.style.transform = at(x0, down);
+      await anim(nav, [
+        { transform: at(x0, down) }, { transform: at(x0, peek), offset: 0.4 }, { transform: at(x0, peek, 8), offset: 0.6 },
+        { transform: at(x0, peek, -8), offset: 0.82 }, { transform: at(x0, peek) }], { duration: rnd(1400, 1900), easing: 'ease-in-out' });
+      nav.style.transform = at(x0, peek);
+      // A hop all the way in: he lands on the bar's edge and stands.
+      await anim(nav, [
+        { transform: at(x0, peek) }, { transform: at(x0, peek + 5), offset: 0.2 },
+        { transform: at(x0, y - hop * 0.6), offset: 0.6 }, { transform: at(x0, y) }], { duration: rnd(520, 640), easing: 'ease-out' });
+      nav.style.transform = at(x0, y);
+      await anim(navSvg, [
+        { transformOrigin: 'center bottom', transform: 'scale(1,1)' }, { transformOrigin: 'center bottom', transform: 'scale(1.07,.92)', offset: 0.35 },
+        { transformOrigin: 'center bottom', transform: 'scale(1,1)' }], { duration: 240, easing: 'ease-out' });
+      await wait(rnd(400, 700));
+      // Paws up onto the button, and a lean into it.
+      keep(eyes, [{ transform: 'translate(0px,0px)' }, { transform: LOOK }], { duration: 250 });
+      keep(paw, [{ transform: REST }, { transform: PAW }], { duration: 320, easing: 'ease-out' });
+      keep(pawL, [{ transform: REST }, { transform: PAWL }], { duration: 320, easing: 'ease-out' });
+      await anim(nav, [{ transform: at(x0, y) }, { transform: at(x1, y, -10) }], { duration: 340, easing: 'ease-out' });
+      nav.style.transform = at(x1, y, -10);
+      // It will not budge: he strains, and the button only shivers.
+      cta.animate([0, -1.5, 0.5, -1.5, 0].map((x) => ({ transform: `translateX(${x}px)` })), { duration: 700 });
+      await anim(nav, [
+        { transform: at(x1, y, -10) }, { transform: at(x1 - 1.5, y, -16), offset: 0.3 }, { transform: at(x1, y, -13), offset: 0.55 },
+        { transform: at(x1 - 1.5, y, -17), offset: 0.8 }, { transform: at(x1, y, -10) }], { duration: 700, easing: 'ease-in-out' });
+      // Three heaves, right across the bar.
+      const steps = [[0, 0, -12], [0.3, 0.36, -13], [0.38, 0.36, -7], [0.64, 0.7, -13], [0.72, 0.7, -7], [1, 1, -12]];
+      const heave = { duration: Math.max(2600, Math.min(5200, d * 5.5)), easing: 'ease-in-out' };
+      nav.classList.add('mk-run');
+      try {
+        keep(cta, steps.map(([offset, p]) => ({ transform: `translateX(${-d * p}px)`, offset, easing: 'ease-in-out' })), heave);
+        await anim(nav, steps.map(([offset, p, a]) => ({ transform: at(x1 - d * p, y, a), offset, easing: 'ease-in-out' })), heave);
+      } finally { nav.classList.remove('mk-run'); }
+      // There. He lets go, steps back and is rather pleased with himself.
+      const x2 = x1 - d + 12;
+      nav.style.transform = at(x2, y);
+      keep(paw, [{ transform: PAW }, { transform: REST }], { duration: 260 });
+      keep(pawL, [{ transform: PAWL }, { transform: REST }], { duration: 260 });
+      keep(eyes, [{ transform: LOOK }, { transform: 'translate(0px,0px)' }], { duration: 260 });
+      await anim(nav, [{ transform: at(x1 - d, y, -12) }, { transform: at(x2, y) }], { duration: 300, easing: 'ease-out' });
+      await anim(nav, [
+        { transform: at(x2, y) }, { transform: at(x2, y - hop), offset: 0.25 }, { transform: at(x2, y), offset: 0.5 },
+        { transform: at(x2, y - hop * 0.7), offset: 0.75 }, { transform: at(x2, y) }], { duration: 620, easing: 'ease-out' });
+      await wait(rnd(250, 500));
+      // The button quivers; he looks round at it.
+      keep(eyes, [{ transform: 'translate(0px,0px)' }, { transform: LOOK }], { duration: 160 });
+      await keep(cta, [0, 2, -2, 3, -3, 2, 0].map((x) => ({ transform: `translateX(${-d + x}px)` })), { duration: 520 });
+      // And it springs back home, bowling him along on its right end.
+      const back = { duration: Math.max(650, Math.min(1100, d * 1.1)), easing: 'cubic-bezier(.55,0,.8,.45)' };
+      keep(cta, [{ transform: `translateX(${-d}px)` }, { transform: 'translateX(0px)' }], back);
+      await anim(nav, [
+        { transform: at(x2, y) }, { transform: at(x1 - d * 0.88, y - 5, 40), offset: 0.12 },
+        { transform: at(x1 - d * 0.5, y - 9, 190), offset: 0.5 }, { transform: at(x1, y - 4, 350) }], back);
+      cta.animate([0, 7, -3, 1, 0].map((x) => ({ transform: `translateX(${x}px)` })), { duration: 420, easing: 'ease-out' });
+      keep(eyes, [{ transform: LOOK }, { transform: 'translate(0px,0px)' }], { duration: 200 });
+      // Thrown clear, back onto his feet where he came in.
+      await anim(nav, [
+        { transform: at(x1, y - 4, 350) }, { transform: at(x0 + 3, y - hop, 362), offset: 0.45 },
+        { transform: at(x0, y + 2, 360), offset: 0.8 }, { transform: at(x0, y, 360) }], { duration: 420, easing: 'ease-out' });
+      nav.style.transform = at(x0, y);
+      // Dizzy.
+      await anim(navSvg, [
+        { transform: 'rotate(0deg)' }, { transform: 'rotate(-11deg)', offset: 0.18 }, { transform: 'rotate(10deg)', offset: 0.38 },
+        { transform: 'rotate(-8deg)', offset: 0.58 }, { transform: 'rotate(5deg)', offset: 0.78 }, { transform: 'rotate(0deg)' }],
+        { duration: rnd(1200, 1500), easing: 'ease-in-out' });
+      await wait(rnd(200, 500));
+      await anim(nav, [{ transform: at(x0, y) }, { transform: at(x0, down) }], { duration: rnd(450, 600), easing: 'ease-in' });
+    } finally {
+      letGo(); cta.getAnimations().forEach((a) => a.cancel());
+      nav.style.transform = nav.style.width = nav.style.height = '';
+      navWindow.style.width = navWindow.style.height = '';
+      cta.style.transition = '';
+    }
+    return true;
+  };
   const peekNav = () => out(nav, async () => {
-    if (Math.random() < 0.4 && await bumpLogo()) return;
+    const turn = Math.random();
+    if (turn < 0.3 && await bumpLogo()) return;
+    if (turn >= 0.3 && turn < 0.55 && await pushButton()) return;
     navWindow.style.left = `${rnd(window.innerWidth < 760 ? 34 : 62, window.innerWidth < 760 ? 58 : 80)}%`;
     const up = rnd(-2, 6);
     const hidden = () => 'translateY(60px) rotate(0)';
