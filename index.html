@@ -42,6 +42,18 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
 /* ---- Apeko, Mokira's mouse: idle in the corner, greets, peeks up from behind the page into the nav, scurries, waves, thinks, celebrates, hops when clicked. Decoration only. ---- */
+/* ---- Apeko, standing still: an introduction under the story cards.
+   This one never moves. ---- */
+.mk-still{display:block;overflow:visible;flex-shrink:0}.mk-still *{transform-box:fill-box}
+.mk-meet{display:flex;align-items:center;gap:22px;max-width:600px;margin:44px 0 0;padding:20px 28px 20px 22px;border:1px solid #e5e3ea;border-radius:8px;background:#f6f5fc}
+.mk-meet .mk-still{width:84px;height:84px}.mk-meet p{margin:8px 0 0;font-size:13px;line-height:1.75;color:#797681}.mk-meet em{font-family:var(--serif);font-size:15px;color:#6262b2}
+@media(max-width:760px){.mk-meet{gap:14px;padding:16px 18px 16px 12px}.mk-meet .mk-still{width:64px;height:64px}}
+/* ---- Apeko out and about down the page: this copy sits in the page
+   itself, clipped only along its bottom, so he comes up from behind
+   the top edge of whatever he is visiting and stands on it. ---- */
+.mk-roam-window{position:absolute;left:0;top:0;width:64px;height:62px;clip-path:inset(-260px -260px 0 -260px);pointer-events:none;z-index:11}
+.mk-roam{position:absolute;left:0;top:0;width:64px;height:64px;visibility:hidden}.mk-roam .mk-svg{pointer-events:none;cursor:default}
+.statement blockquote em{position:relative}
 .mk-mouse{position:fixed;right:22px;bottom:14px;width:72px;height:72px;z-index:30;pointer-events:none}
 .mk-svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:auto;cursor:pointer}
 .mk-svg *{transform-box:fill-box}
@@ -203,7 +215,8 @@
  <article class="story-card"><div><div class="num">01 / SEE</div><div class="story-icon">☼</div></div><div><h3>Start with the whole picture.</h3><p>An editorial view of your day brings conversations, commitments, and ideas into perspective—not another feed to scroll.</p></div></article>
  <article class="story-card"><div><div class="num">02 / DECIDE</div><div class="story-icon">◇</div></div><div><h3>Know what deserves you.</h3><p>See what's urgent, what's interesting, and what can wait. Put your attention where it does the most good.</p></div></article>
  <article class="story-card"><div><div class="num">03 / DO</div><div class="story-icon">↗</div></div><div><h3>Let intelligence help.</h3><p>From a daily briefing to your own AI agents, make technology work for your priorities instead of the other way around.</p></div></article>
-</div></div></section>
+</div><aside class="mk-meet"><svg class="mk-still" viewBox="0 0 120 120" role="img" aria-label="Apeko, a small lavender mouse, waving hello"><g><path d="M80 104 C 100 106, 112 96, 108 82 C 105 72, 96 74, 98 82" fill="none" stroke="#6a64a8" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="30" ry="26" fill="url(#mk-fur2)"/><ellipse cx="60" cy="94" rx="17" ry="16" fill="#eeedfb"/><ellipse cx="46" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="74" cy="112" rx="9" ry="4.5" fill="#9a88d4"/><ellipse cx="48" cy="92" rx="5" ry="6.5" fill="#a796dc"/><ellipse cx="72" cy="92" rx="5" ry="6.5" fill="#a796dc" style="transform:translate(22px,-25px) rotate(22deg)"/><g><circle cx="34" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="34" cy="35" r="11" fill="#f3c3d6"/><circle cx="86" cy="34" r="17" fill="url(#mk-head2)"/><circle cx="86" cy="35" r="11" fill="#f3c3d6"/><ellipse cx="60" cy="58" rx="28" ry="25" fill="url(#mk-head2)"/><ellipse cx="60" cy="66" rx="15" ry="11" fill="#eeedfb" opacity=".85"/><g><ellipse cx="49" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><ellipse cx="71" cy="55" rx="4.2" ry="5" fill="#1b1d47"/><circle cx="50.4" cy="53.2" r="1.5" fill="#fff"/><circle cx="72.4" cy="53.2" r="1.5" fill="#fff"/></g><ellipse cx="42" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="78" cy="64" rx="4" ry="2.4" fill="#f3c3d6" opacity=".7"/><ellipse cx="60" cy="63" rx="3" ry="2.2" fill="#e98aa8"/><path d="M56.5 67 Q 60 70, 63.5 67" fill="none" stroke="#4a4680" stroke-width="1.3" stroke-linecap="round"/><g stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M50 64 L 30 60"/><path d="M50 66 L 29 67"/><path d="M50 68 L 31 74"/></g><g stroke="#4a4680" stroke-width="1" stroke-linecap="round" opacity=".7"><path d="M70 64 L 90 60"/><path d="M70 66 L 91 67"/><path d="M70 68 L 89 74"/></g></g></g></svg><div><div class="section-kicker">MEET APEKO</div><p>Mokira's small, curious guide. He is somewhere on this page right now, and he is very fond of the word <em>free</em>.</p></div></aside>
+</div></section>
 <section class="section freedom" id="freedom"><div class="wrap"><div class="section-kicker">FOUR FREEDOMS</div><h2 class="section-title">Freedom isn't a feature.<br>It's the point.</h2><p class="section-desc freedom-intro">Mokira begins with a simple belief: the more powerful intelligence becomes, the more freedom it should give you.</p><div class="freedom-grid">
  <article class="freedom-card"><div class="figure">01</div><div><h3>Freedom to create.</h3><p>Spend less energy organizing the machinery of your day and more energy on the work, relationships, and ideas that make it yours.</p></div></article>
  <article class="freedom-card"><div class="figure">02</div><div><h3>Freedom to choose.</h3><p>Your accounts, your sources, your agents. Start with the tools you already use rather than rebuilding your world around one more platform.</p></div></article>
@@ -793,8 +806,8 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
   };
   const peekNav = () => out(nav, async () => {
     const turn = Math.random();
-    if (turn < 0.3 && await bumpLogo()) return;
-    if (turn >= 0.3 && turn < 0.55 && await pushButton()) return;
+    if (turn < 0.4 && await bumpLogo()) return;
+    if (turn >= 0.4 && turn < 0.8 && await pushButton()) return;
     navWindow.style.left = `${rnd(window.innerWidth < 760 ? 34 : 62, window.innerWidth < 760 ? 58 : 80)}%`;
     const up = rnd(-2, 6);
     const hidden = () => 'translateY(60px) rotate(0)';
@@ -802,18 +815,117 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     await anim(nav, peekFrames(hidden, shown, 12, 4), { duration: rnd(3200, 5400), easing: 'ease-in-out' });
   });
 
-  // A trip: off the corner, out at two to four of his spots one after
+  // ---- Out and about down the page. When the visitor has scrolled and
+  // other parts of the page are in view, he turns up there: up from
+  // behind the top edge of a card, a button or a section, a hop onto
+  // it, something to do with what he has landed on, and down again.
+  // The copy sits in the page itself, so it scrolls with what he is
+  // standing on. ----
+  const roamWindow = document.createElement('div'); roamWindow.className = 'mk-roam-window'; roamWindow.setAttribute('aria-hidden', 'true');
+  const roam = document.createElement('div'); roam.className = 'mk-roam';
+  roam.appendChild(navSvg.cloneNode(true)); roamWindow.appendChild(roam); document.body.appendChild(roamWindow);
+  const roamSvg = roam.querySelector('svg'); roamSvg.querySelector('defs').remove();
+  copies.push(roam);
+  const rover = tricksOf(roam, roamSvg);
+  const trick = () => rover.tricks[pick(['wave', 'think', 'celebrate'])]();
+  const thud = (el) => el.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(3px)', offset: 0.35 }, { transform: 'translateY(0px)' }], { duration: 280, easing: 'ease-out' });
+  const spin = (el) => el && el.animate([
+    { transform: 'rotate(0deg) scale(1)' }, { transform: 'rotate(200deg) scale(1.2)', offset: 0.5 }, { transform: 'rotate(360deg) scale(1)' }],
+    { duration: 1000, easing: 'ease-in-out' });
+  const bob = (el) => el && el.animate([0, -10, 0, -5, 0].map((y) => ({ transform: `translateY(${y}px)` })), { duration: 760, easing: 'ease-out' });
+  // Where he can turn up, and what he does with each: `find` the things
+  // to stand on, `thud` if it dips as he lands, `at` for a place of his
+  // own along its top (else anywhere), `act` for what happens there.
+  const PLACES = [
+    // A story card: its icon spins round.
+    { find: '.story-card', thud: true, act: async (el) => { spin(el.querySelector('.story-icon')); await trick(); } },
+    // A freedom card: its number bobs.
+    { find: '.freedom-card', thud: true, act: async (el) => { bob(el.querySelector('.figure')); await trick(); } },
+    // His own portrait: he stands beside it and presents it.
+    { find: '.mk-meet', thud: true, at: (r) => r.left + r.height + 8, act: async () => {
+      rover.say(pick(["That's me!", 'A good likeness.', 'My best side.']), 2000, 'mk-say-right'); await rover.present(2600);
+    } },
+    // The experience panel: its crane flaps.
+    { find: '.explore-panel', act: async (el) => { flapCrane(el); await trick(); } },
+    // The statement: "freedom" sparkles, and he cheers.
+    { find: '.statement', act: async (el) => { sparkle(el.querySelector('blockquote em'), 2800); await rover.tricks.celebrate(); } },
+    // The closing section's top edge: the crane below him flaps.
+    { find: '.closing', act: async (el) => { flapCrane(el); await trick(); } },
+    // The footer's top line: a goodbye, and the footer's crane flaps.
+    { find: '.footer', act: async (el) => {
+      flapCrane(el); rover.say(pick(['Thanks for visiting!', 'Come back soon!', 'You made it to the end!']), 2000); await rover.tricks.wave();
+    } },
+  ];
+  const roamSize = () => (window.innerWidth < 760 ? 54 : 64);
+  // In view enough to watch; and with its top edge on screen, with room
+  // above it for him to stand and say something.
+  const inView = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.bottom > 60 && r.top < window.innerHeight - 60; };
+  const perchable = (el) => { const r = el.getBoundingClientRect(), size = roamSize(); return r.width > size + 24 && r.top > size + 50 && r.top < window.innerHeight - 70; };
+  let lastPlace = null;
+  const placesHere = () => {
+    const found = [];
+    PLACES.forEach((place) => document.querySelectorAll(place.find).forEach((el) => { if (el !== lastPlace && perchable(el)) found.push([place, el]); }));
+    return found;
+  };
+  const visit = (place, el) => out(roam, async () => {
+    const size = roamSize(), r = el.getBoundingClientRect();
+    const lo = Math.max(r.left + 12, 100), hi = Math.min(r.right - size - 12, window.innerWidth - size - 16);
+    const x = place.at ? place.at(r) : hi > lo ? rnd(lo, hi) : Math.max(16, hi);
+    // The window's bottom edge is the thing's top edge: the soles of
+    // his feet come to rest on it.
+    const stand = size * (116.5 / 120);
+    Object.assign(roamWindow.style, { left: `${x + window.scrollX}px`, top: `${r.top + window.scrollY - stand}px`, width: `${size}px`, height: `${stand}px` });
+    roam.style.width = roam.style.height = `${size}px`;
+    const at = (y, a = 0) => `translateY(${y}px) rotate(${a}deg)`;
+    const down = size + 6, peek = size * 0.5;
+    roam.style.transform = at(down);
+    try {
+      await anim(roam, [
+        { transform: at(down) }, { transform: at(peek), offset: 0.4 }, { transform: at(peek, 8), offset: 0.6 },
+        { transform: at(peek, -7), offset: 0.82 }, { transform: at(peek) }], { duration: rnd(1300, 1800), easing: 'ease-in-out' });
+      roam.style.transform = at(peek);
+      await anim(roam, [
+        { transform: at(peek) }, { transform: at(peek + 5), offset: 0.2 }, { transform: at(-12), offset: 0.6 }, { transform: at(0) }],
+        { duration: rnd(480, 600), easing: 'ease-out' });
+      roam.style.transform = at(0);
+      if (place.thud) thud(el);
+      await wait(rnd(300, 600));
+      await place.act(el);
+      await wait(rnd(300, 700));
+      await anim(roam, [{ transform: at(0) }, { transform: at(-8), offset: 0.3 }, { transform: at(down) }], { duration: rnd(450, 600), easing: 'ease-in' });
+    } finally { roam.style.transform = ''; }
+  });
+  const peekHere = async () => {
+    const found = placesHere();
+    if (!found.length) return;
+    const [place, el] = pick(found); lastPlace = el;
+    await visit(place, el);
+  };
+
+  // A trip: off the corner, out at three to five of his spots one after
   // the other (never the same spot twice running), then home again.
   let lastSpot = null;
   const goPeek = async () => {
     busy = true;
     m.classList.add('mk-exit'); await wait(1800);
     m.classList.remove('mk-exit'); m.classList.add('mk-away');
-    const spots = [peekNav, peekSide, peekButton, peekEdge, peekClimb];
-    const stops = pick([2, 3, 3, 4]);
+    // Only spots the visitor can see just now, looked up afresh at each
+    // stop in case the page has been scrolled. The nav bar is in twice
+    // (he goes there about twice as often as to any other spot), and
+    // down the page so are the things in view he can stand on.
+    const spotsNow = () => {
+      const spots = [peekEdge];
+      if (inView(navWindow.parentElement)) spots.push(peekNav, peekNav);
+      if (inView(side.parentElement)) spots.push(peekSide, peekClimb);
+      if (inView(btn.parentElement)) spots.push(peekButton);
+      if (placesHere().length) spots.push(peekHere, peekHere, peekHere);
+      const fresh = spots.filter((f) => f !== lastSpot || f === peekHere);
+      return fresh.length ? fresh : spots;
+    };
+    const stops = pick([3, 4, 4, 5]);
     await wait(rnd(200, 1000));
     for (let k = 0; k < stops; k++) {
-      const spot = pick(spots.filter((f) => f !== lastSpot)); lastSpot = spot;
+      const spot = pick(spotsNow()); lastSpot = spot;
       await spot();
       await wait(rnd(400, 1500));
     }
@@ -842,10 +954,10 @@ const exButtons=document.querySelectorAll('[data-explore]');exButtons.forEach(b=
     for (;;) {
       if (!busy) {
         const r = Math.random();
-        if (r < 0.8) await goPeek();
+        if (r < 0.92) await goPeek();
         else await fidget();
       }
-      await wait(rnd(2000, 5500));
+      await wait(rnd(1200, 3000));
     }
   })();
 })();
